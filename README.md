@@ -1,0 +1,2 @@
+# StangeMercadoPago
+Shopware MercadoPago Plugin
