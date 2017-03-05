@@ -13,5 +13,7 @@ setting to the correct currency from your country.
 
 NOTE: Argentina accepts two currencies, USD and ARS
 
-@TODO: Add support for IPN's (Instant payment notifications)
-@TODO: Add support for custom checkout methods 
+### TODO
+
+- [ ]	Add support for IPN's (Instant payment notifications)
+- [ ]	Add support for custom checkout methods 
