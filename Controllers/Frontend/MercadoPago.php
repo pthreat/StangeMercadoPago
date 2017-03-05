@@ -23,6 +23,12 @@
 
 			$this->plugin = $this->get('kernel')->getPlugins()['StangeMercadoPago'];
 
+			/**
+			 * There must be a better way to handle this. As of now "it works" (tm)
+			 */
+
+			$this->plugin->requireAutoloader();
+
 			$this->get('template')
 			->addTemplateDir(
 									sprintf(
@@ -98,8 +104,8 @@
 			$mpPreference	=	$this->getProviderUrl();
 			$checkoutMode	=	strtolower($this->plugin->getConfig('checkoutmode'));
 
-			$url				=	$checkoutMode == 'prod' ? $mpPreference['init_point'] : 
-									$mpPreference['sandbox_init_point'];
+			$url				=	$checkoutMode == 'prod' ? $mpPreference['response']['init_point'] : 
+									$mpPreference['response']['sandbox_init_point'];
 
 			$this->redirect($url);
 
@@ -110,57 +116,18 @@
 			$mpPreference	=	$this->getProviderUrl();
 			$checkoutMode	=	strtolower($this->plugin->getConfig('checkoutmode'));
 
-			$url				=	$checkoutMode == 'prod' ? $mpPreference['init_point'] : 
-									$mpPreference['sandbox_init_point'];
+			$url				=	$checkoutMode == 'prod' ? $mpPreference['response']['init_point'] : 
+									$mpPreference['response']['sandbox_init_point'];
 
 			$this->View()->assign('gatewayUrl',$url);
 
 		}
 
-		public function returnAction(){
+		/**
+		 * @TODO Instant payment notifications
+		 */
 
-			/**
-			 * @var MercadoPagoPaymentService $service
-			 */
-
-			$service	=	$this->getService();
-			$user		=	$this->getUser();
-			$billing	=	$user['billingaddress'];
-
-			/**
-			 * @var PaymentResponse $response
-			 */
-
-			$response	=	$service->createPaymentResponse($this->Request());
-			$token		=	$service->createPaymentToken($this->getAmount(), $billing['customernumber']);
-
-			if(!$service->isValidToken($response, $token)){
-
-				$this->forward('cancel');
-				return;
-
-			}
-
-			switch ($response->status){
-
-				case 'accepted':
-
-					$this->saveOrder(
-											$response->transactionId,
-											$response->token,
-											self::PAYMENTSTATUSPAID
-					);
-
-
-					$this->redirect(['controller' => 'checkout', 'action' => 'finish']);
-
-             break;
-
-            default:
-                $this->forward('cancel');
-				break;
-
-			}
+		public function ipnAction(){
 
 		}
 
@@ -175,35 +142,6 @@
 		private function getService($name=NULL){
 
 			return $this->container->get('stange_mercadopago_checkout.mercado_pago');
-
-		}
-
-		/**
-		 * Creates the url parameters
-		 */
-
-		private function getUrlParameters(){
-
-			/**
-			 * @var MercadoPagoPaymentService $service 
-			 */
-
-			$service	=	$this->getService();
-			$router	=	$this->Front()->Router();
-			$user		=	$this->getUser();
-			$billing	=	$user['billingaddress'];
-
-			$parameter = [
-								'amount'		=>	$this->getAmount(),
-								'currency'	=>	$this->getCurrencyShortName(),
-								'firstName'	=>	$billing['firstname'],
-								'lastName'	=>	$billing['lastname'],
-								'returnUrl'	=>	$router->assemble(['action' => 'return', 'forceSecure' => true]),
-								'cancelUrl'	=>	$router->assemble(['action' => 'cancel', 'forceSecure' => true]),
-								'token'		=>	$service->createPaymentToken($this->getAmount(), $billing['customernumber'])
-			];
-
-        return '?' . http_build_query($parameter);
 
 		}
 

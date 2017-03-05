@@ -11,6 +11,16 @@
 
 		class StangeMercadoPago extends BaseShopwarePlugin{
 
+			public function requireAutoloader(){
+
+				if(!class_exists('MP')){
+
+					require __DIR__.'/vendor/autoload.php';
+
+				}
+
+			}
+
 			/**
 			 * @param InstallContext $context
 			 */

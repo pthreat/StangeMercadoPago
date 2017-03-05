@@ -13,6 +13,21 @@ setting to the correct currency from your country.
 
 NOTE: Argentina accepts two currencies, USD and ARS
 
+###UI MODES
+
+(2017-03-05) As of this date, the iframe UI mode is not working correctly (MercadoPago Problem)
+
+Please use any of the javascript modes (except modal) or the PHP Redirect mode
+
+The Javascript popup mode is highly discouraged since most browsers will block said popups.
+
+### Checkout mode
+
+(2017-03-05) As of this date the "sandbox mode" doesn't works correctly. The purposed workaround by MercadoPago
+is to use production mode and use testing credit cards provided here: 
+
+https://www.mercadopago.com.ar/developers/es/solutions/payments/custom-checkout/test-cards/
+
 ### TODO
 
 - [ ]	Refresh config cache for easy managment (i.e: Not having to refresh the cache manually from the backend)
