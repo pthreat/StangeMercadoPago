@@ -13,6 +13,10 @@ setting to the correct currency from your country.
 
 NOTE: Argentina accepts two currencies, USD and ARS
 
+### Configuring the plugin
+
+Make sure that everytime you configure this plugin you clear your shop cache (See TODO list)
+
 ###UI MODES
 
 (2017-03-05) As of this date, the iframe UI mode is not working correctly (MercadoPago Problem)
