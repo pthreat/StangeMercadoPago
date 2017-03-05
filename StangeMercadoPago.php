@@ -31,11 +31,7 @@
 								'action'						=> 'MercadoPago',
 								'active'						=>	0,
 								'position'					=> 0,
-								'additionalDescription' =>	"<img src=\"$img\" />" .
-																	'<div id="payment_desc">'.
-																	'Enable your customers to pay through the '.
-																	"most prefered latin america's payment method (MercadoPago)".
-																	'</div>'
+								'additionalDescription' =>	"<img src=\"$img\" />" 
 				];
 
 				$installer->createOrUpdate($context->getPlugin(), $options);
