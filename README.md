@@ -1,4 +1,5 @@
-# Shopware MercadoPago Payment Plugin (by Federico Stange)
+# Shopware MercadoPago Payment Plugin 
+### (by Federico Stange)
 
 For using this plugin you need to create a mercado pago developer account at
 https://www.mercadopago.com/developers/
