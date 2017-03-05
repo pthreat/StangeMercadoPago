@@ -9,6 +9,14 @@
 
 		public function preDispatch(){
 
+			//In case the basket is empty, redirect to the DocumentRoot
+
+			if(empty($this->getBasket())){
+
+				$this->redirect('/');
+
+			}
+
 			/**
 			 * @var \Shopware\Components\Plugin $plugin 
 			 */
