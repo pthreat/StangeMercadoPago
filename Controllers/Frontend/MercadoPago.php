@@ -201,28 +201,25 @@
 
 		private function basketToMpItems(){
 
-			$basket		=	$this->getBasket();;
-			$content		=	$basket['content'];
-			$currency	=	$basket['sCurrencyName'];
+			$basket			=	$this->getBasket();;
+			$content			=	$basket['content'];
+			$currency		=	$basket['sCurrencyName'];
+			$appCurrency	=	$this->plugin->getConfig('currency');
 
-			/**
-			 * MercadoPago has a *BUG* in which if the store is in EUR (Euro) 
-			 * It will not automatically convert the currency to ARS (Argentine Peso) or USD
-			 * @TODO Think how to handle currency conversions through the google currency converter.
-			 * Add a configuration in the backend which is able to handle said conversions.
-			 */
-
-			$currency	=	'USD';
+			$rate				=	$appCurrency !== $currency ? 
+									$this->plugin->convertRate($currency,$appCurrency) : 1;
 
 			$items		=	[];
 
 			foreach($content as $article){
 
+				$price	=	$rate * floatval(number_format($article['price'],2,'.',''));
+
 				$items[]	=	[
 									"title"			=>	$article['articlename'],
 									"quantity"		=>	(int)$article['quantity'],
-									"currency_id"	=>	$currency,
-									"unit_price"	=>	floatval(number_format($article['price'],2,'.',''))
+									"currency_id"	=>	$appCurrency,
+									"unit_price"	=>	$price
 				];
 				
 			}

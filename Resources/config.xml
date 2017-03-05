@@ -17,6 +17,127 @@
 
 		<element required="true" type="select">
 
+			<name>CURRENCY</name>
+
+			<label lang="de">Applikation Währung</label>
+			<label lang="en">Application Currency</label>
+
+			<store>
+
+				<option>
+					<value>ARS</value>
+					<label lang="de">Argentinien Peso</label>
+					<label lang="en">Argentine Peso</label>
+				</option>
+
+				<option>
+					<value>BOB</value>
+					<label lang="de">Bolivianisch Peso</label>
+					<label lang="en">Bolivian Peso</label>
+				</option>
+
+				<option>
+					<value>BRS</value>
+					<label lang="de">Brasilianer Real</label>
+					<label lang="en">Brazilian Real</label>
+				</option>
+
+				<option>
+					<value>CLF</value>
+					<label lang="de">Chilenisch (Unidad de fomento</label>
+					<label lang="en">Chilean (Unidad de fomento)</label>
+				</option>
+				
+				<option>
+					<value>CLP</value>
+					<label lang="de">Chilenisch Peso</label>
+					<label lang="en">Chilean Peso</label>
+				</option>
+
+				<option>
+					<value>COP</value>
+					<label lang="de">Colombianisch Peso</label>
+					<label lang="en">Colombian Peso</label>
+				</option>
+
+				<option>
+					<value>CRC</value>
+					<label lang="de">Costa Rican Colones</label>
+					<label lang="en">Costa Rican Colones</label>
+				</option>
+
+				<option>
+					<value>CUC</value>
+					<label lang="de">Kubanischer Peso Convertible</label>
+					<label lang="en">Cuban Convertible Peso</label>
+				</option>
+
+				<option>
+					<value>DOP</value>
+					<label lang="de">Dominikanisch Peso</label>
+					<label lang="en">Dominican Peso</label>
+				</option>
+
+				<option>
+					<value>GTQ</value>
+					<label lang="de">Quetzal Guatemalteco</label>
+					<label lang="en">Quetzal Guatemalteco</label>
+				</option>
+
+				<option>
+					<value>EUR</value>
+					<label lang="de">Euro</label>
+					<label lang="en">Euro</label>
+				</option>
+
+				<option>
+					<value>HNL</value>
+					<label lang="de">Lempira</label>
+					<label lang="en">Lempira</label>
+				</option>
+
+				<option>
+					<value>NIO</value>
+					<label lang="de">Córdoba</label>
+					<label lang="en">Córdoba</label>
+				</option>
+
+				<option>
+					<value>PAB</value>
+					<label lang="de">Balboa</label>
+					<label lang="en">Balboa</label>
+				</option>
+
+				<option>
+					<value>PEN</value>
+					<label lang="de">Soles</label>
+					<label lang="en">Soles</label>
+				</option>
+
+				<option>
+					<value>USD</value>
+					<label lang="de">US Dollar</label>
+					<label lang="en">US Dollar</label>
+				</option>
+
+				<option>
+					<value>UYU</value>
+					<label lang="de">Uruguayischen Peso</label>
+					<label lang="en">Uruguayan Peso</label>
+				</option>
+
+				<option>
+					<value>VEF</value>
+					<label lang="de">Bolivar Fuerte</label>
+					<label lang="en">Bolivar Fuerte</label>
+				</option>
+
+			</store>
+
+		</element>
+
+		<element required="true" type="select">
+
 			<name>CHECKOUT_MODE</name>
 
 			<label lang="de">Checkout Betriebsart</label>
