@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/5.2/engine/Shopware/Components/Plugin/schema/config.xsd">
+
+	<elements>
+
+		<element required="true" type="text">
+			<name>CLIENT_ID</name>
+			<label lang="de">CLIENT_ID</label>
+			<label lang="en">CLIENT_ID</label>
+		</element>
+
+		<element required="true" type="text">
+			<name>CLIENT_SECRET</name>
+			<label lang="de">CLIENT_SECRET</label>
+			<label lang="en">CLIENT_SECRET</label>
+		</element>
+
+		<element required="true" type="select">
+
+			<name>CHECKOUT_MODE</name>
+
+			<label lang="de">Checkout Betriebsart</label>
+			<label lang="en">Checkout Operation mode</label>
+
+			<store>
+				<option>
+					<value>PROD</value>
+					<label lang="de">Produktion Modus</label>
+					<label lang="en">Production Mode</label>
+				</option>
+				<option>
+					<value>DEV</value>
+					<label lang="de">Sandbox Modus (Development)</label>
+					<label lang="en">Sandbox Mode (Development)</label>
+				</option>
+			</store>
+
+		</element>
+
+		<element required="true" type="select">
+
+			<name>UI_MODE</name>
+
+			<label lang="de">UI Betriebsart</label>
+			<label lang="en">UI Operation mode</label>
+
+			<store>
+
+				<option>
+					<value>modal</value>
+					<label lang="de">Javascript Modal</label>
+					<label lang="en">Javascript Modal</label>
+				</option>
+
+				<option>
+					<value>popup</value>
+					<label lang="de">Javascript Popup</label>
+					<label lang="en">Javascript Popup</label>
+				</option>
+
+				<option>
+					<value>redirect</value>
+					<label lang="de">Javascript Redirect</label>
+					<label lang="en">Javascript Redirect</label>
+				</option>
+
+				<option>
+					<value>blank</value>
+					<label lang="de">Javascript Neue Window</label>
+					<label lang="en">Javascript New Window</label>
+				</option>
+
+				<option>
+					<value>iframe</value>
+					<label lang="de">Store Iframe</label>
+					<label lang="en">Store Iframe</label>
+				</option>
+
+				<option>
+					<value>php_redirect</value>
+					<label lang="de">PHP Redirect</label>
+					<label lang="en">PHP Redirect</label>
+				</option>
+
+			</store>
+
+		</element>
+	</elements>
+
+</config>

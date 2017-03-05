@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/5.2/engine/Shopware/Components/Plugin/schema/plugin.xsd">
+
+	<label lang="en">MercadoPago Checkout</label>
+	<label lang="de">MercadoPago Checkout</label>
+
+	<version>1.0.0</version>
+	<copyright>(c) Stange</copyright>
+	<author>Federico Stange</author>
+
+	<compatibility minVersion="5.2.13"/>
+
+</plugin>
