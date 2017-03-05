@@ -15,5 +15,6 @@ NOTE: Argentina accepts two currencies, USD and ARS
 
 ### TODO
 
+- [ ]	Refresh config cache for easy managment (i.e: Not having to refresh the cache manually from the backend)
 - [ ]	Add support for IPN's (Instant payment notifications)
 - [ ]	Add support for custom checkout methods 
