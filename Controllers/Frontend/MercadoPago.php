@@ -7,6 +7,8 @@
 
 		private	$plugin	=	NULL;
 
+		private	$rate		=	NULL;
+
 		public function preDispatch(){
 
 			//In case the basket is empty, redirect to the DocumentRoot
@@ -79,12 +81,6 @@
 
 		}
 
-		/**
-		 * Gateway action method.
-		 *
-		 * Collects the payment information and transmit it to the payment provider.
-		 */
-
 		public function javascriptAction(){
 
 			$mpPreference	=	$this->getProviderUrl();
@@ -145,9 +141,104 @@
 
 		}
 
+		/******************************************************************************/
+		
+		/** 
+		 * Conversion / Helper methods
+		 *
+		 * @TODO Move these to another class, perhaps to the service class?
+		 *
+		 */
+
+		/**
+		 * Convert ShopWare customer data to MercadoPago customer expected structure
+		 *
+		 * @link https://www.mercadopago.com.ar/developers/es/api-docs/basic-checkout/checkout-preferences/
+		 * @return Array An array containing customer data in MP format.
+		 */
+
+		private function customerDataToMp(){
+
+			$customer	=	$this->getUser()['additional']['user'];
+
+			/**
+			 * The phone field needs to be more specific for MercadoPago
+			 * Maybe: Use google's libphonenumber to parse the phone
+			 */
+
+			//'phone'		=>	$customer['shippingaddress']['phone'],
+
+			return [
+						'name'		=>	$customer['firstname'],
+						'surname'	=>	$customer['lastname'],
+						'email'		=>	$customer['email']
+			];
+
+		}
+
+		/**
+		 * Convert ShopWare customer shipping address to MercadoPago shippments format
+		 *
+		 * @link https://www.mercadopago.com.ar/developers/es/api-docs/basic-checkout/checkout-preferences/
+		 * @return Array An array containing shippment data in MP format.
+		 */
+
+		private function shipmentsToMp(){
+
+			$cost			=	floatval($this->getShipment()) * $this->rate;
+
+			$swAddress	=	$this->getUser()['shippingaddress'];
+
+			$street		=	trim(preg_replace('/[0-9]/','',$swAddress['street']));
+			$number		=	explode(' ',$swAddress['street']);
+			$num			=	0;
+
+			foreach($number as $num){
+
+				if(preg_match('/[0-9]+/',$num)){
+
+					$num	=	(int)$num;
+					break;
+
+				}
+
+			}
+
+			$address		=	[
+									'zip_code'			=>	$swAddress['zipcode'],
+									'street_name'		=>	$street,
+									'street_number'	=>	$num,
+									'floor'				=>	'',		//@TODO floor parsing
+									'apartment'			=>	'',		//@TODO apartment parsing
+			];
+
+			$mpShipment	=	[
+									'mode'					=>	'custom',
+									'cost'					=>	$cost
+			];
+
+			if(!$cost){
+
+				$mpShipment['free_shipping']	=	TRUE;
+
+			}
+
+			$mpShipment['receiver_address']	=	$address;
+
+			return $mpShipment;
+
+		}
+
+		/**
+		 * Parse Shopware Basket items to MercadoPago items structure
+		 *
+		 * @link https://www.mercadopago.com.ar/developers/es/api-docs/basic-checkout/checkout-preferences/
+		 * @return Array An array containing items data in MP format.
+		 */
+
 		private function basketToMpItems(){
 
-			$basket			=	$this->getBasket();;
+			$basket			=	$this->getBasket();
 			$content			=	$basket['content'];
 			$currency		=	$basket['sCurrencyName'];
 			$appCurrency	=	$this->plugin->getConfig('currency');
@@ -155,11 +246,18 @@
 			$rate				=	$appCurrency !== $currency ? 
 									$this->plugin->convertRate($currency,$appCurrency) : 1;
 
+			/**
+			 * Set the rate in the rate class attribute so other methods can make use of said rate
+			 * (i.e: The shipping method)
+			 */
+
+			$this->rate		=	$rate;
+
 			$items		=	[];
 
 			foreach($content as $article){
 
-				$price	=	$rate * floatval(number_format($article['price'],2,'.',''));
+				$price	=	$this->rate * floatval(number_format($article['price'],2,'.',''));
 
 				$items[]	=	[
 									"title"			=>	$article['articlename'],
@@ -188,7 +286,10 @@
 			);
 
 			$preference	=	Array(
-										'items'	=>	$this->basketToMpItems()
+										'items'		=>	$this->basketToMpItems(),
+										'payer'		=>	$this->customerDataToMp(),
+										'shipments'	=>	$this->shipmentsToMp()
+
 			);
 
 			return $mp->create_preference($preference);
