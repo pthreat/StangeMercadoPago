@@ -6,4 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'StangeMercadoPago\\Controller\\' => array($baseDir . '/Controllers'),
+    'StangeMercadoPago\\Command\\' => array($baseDir . '/Commands'),
 );

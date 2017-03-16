@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "154f563d144d5f58b5b5df4ac24e246c",
+    "content-hash": "be181c271b37ec86ba6b51596978ad2f",
     "packages": [
         {
             "name": "mercadopago/sdk",

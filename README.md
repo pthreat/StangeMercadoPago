@@ -22,17 +22,26 @@ As of now the plugin will not show up in the backend plugin list since I haven't
 plugin store yet.
 
 For installing it, get into your shopware directory, i.e: cd /var/www/shopware
-get into the custom/plugins folder
+
+Now get into the custom/plugins folder
 
 Run the command: 
 
 git clone https://github.com/pthreat/StangeMercadoPago.git
+
+Now get into to the plugin directory:
+
+cd StangeMercadoPago
+
+Run:  ../../../composer.phar install 
 
 Get back into your shopware directory (in this example /var/www/shopware)
 
 run php bin/console sw:plugin:refresh
 
 run php bin/console sw:plugin:install --activate StangeMercadoPago
+
+### Configuring the plugin
 
 Login into your backend and open up the plugin manager
 
@@ -42,9 +51,7 @@ Refresh the shop cache (Under Configuration -> Cache/Performance -> Clear Shop C
 
 That's it! You should be ready to use the MercadoPago checkout plugin!
 
-### Configuring the plugin
-
-Make sure that everytime you configure this plugin you clear your shop cache (See TODO list)
+NOTE: Make sure that everytime you configure this plugin you clear your shop cache (See TODO list)
 
 ###UI MODES
 
@@ -61,8 +68,14 @@ is to use production mode and use testing credit cards provided here:
 
 https://www.mercadopago.com.ar/developers/es/solutions/payments/custom-checkout/test-cards/
 
+### UPDATES
+
+Added IPN Notification support for basic checkout
+Added a handy command for developers to be able to create mercadopago test users (stange:mercadopago:create:test-user)
+
 ### TODO
 
 - [ ]	Refresh config cache for easy managment (i.e: Not having to refresh the cache manually from the backend)
-- [ ]	Add support for IPN's (Instant payment notifications)
-- [ ]	Add support for custom checkout methods 
+- [ ]	Add support for custom checkout methods (On store through mercadopago js sdk)
+- [ ] Enable other types of checkout (Rapipago, PagoFacil)
+
