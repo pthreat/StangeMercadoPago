@@ -134,17 +134,21 @@
 
 		private function getCheckoutUrl(){
 
-			return $this->getService()
-			->getCheckoutUrl(
-									Array(
-											'items'		=>	$this->getBasket(),
+			$basket	=	$this->getBasket();
+
+			$service	=	$this->getService();
+
+			$service->setStoreCurrency($basket['sCurrencyName']);
+
+			return $service->getCheckoutUrl([
+											'items'		=>	$basket['content'],
 											'payer'		=>	$this->getUser()['additional']['user'],
 											'shipment'	=>	[
 																	'price'		=>	$this->getShipment(),
 																	'address'	=>	$this->getUser()['shippingaddress']
 											]
 
-									)
+			]);
 			);
 
 		}
@@ -224,7 +228,7 @@
 		public function ipnAction(){
 
 			$response	=	$this->getService()
-			->createIPNPaymentResponseFromEnlightRequest($this->Request());
+			->createIPNResponseFromRequest($this->Request());
 
 			$this->saveOrder(
 									$response->id,

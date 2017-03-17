@@ -1,5 +1,18 @@
 <?php
 
+	/**
+	 * This service uses the \MP client class by composition in order to obtain a valid checkout URL.
+	 *
+	 * @author Federico Stange <jpfstange@gmail.com>
+	 * @license MIT (For more details, see the LICENSE file)
+	 * 
+	 * @TODO replace array structures with "shopware structs" to be able to type hint each method.
+	 *
+	 * @TODO Once every structure has been defined in a separate class, create separate 
+	 * factory classes for building said objects from arrays.
+	 *
+	 */
+
 	namespace StangeMercadoPago\Components\Service\Checkout{
 
 		use \StangeMercadoPago\Components\Service\Checkout\Base	as	BaseCheckout;
@@ -10,11 +23,23 @@
 			/**
 			 * Convert ShopWare customer data to MercadoPago customer expected structure
 			 *
+			 * Expected structure example:
+			 * <code>
+			 *	[
+			 *		'firstname'	=>	'Federico',
+			 *		'lastname'	=>	'Stange',
+			 *		'email'		=>	'jpfstange@gmail.com'
+			 *	]
+			 * </code>
+			 *
 			 * @link https://www.mercadopago.com.ar/developers/es/api-docs/basic-checkout/checkout-preferences/
+			 * @throws \InvalidArgumentException if the customer data passed in the array is invalid.
 			 * @return Array An array containing customer data in MP format.
 			 */
 
 			public function customerToMp(Array $customerData){
+
+				$this->validateCustomer($customerData);
 
 				/**
 				 * The phone field needs to be more specific for MercadoPago
@@ -33,18 +58,20 @@
 
 			/**
 			 * Convert ShopWare customer shipping address to MercadoPago shippments format
+			 *
 			 * You must pass an array with the following (example) format:
 			 *
 			 * <code>
 			 * [
-			 *    "price"   => 10,
+			 *    "price"   => 10.2,
 			 *    "address" => [
 			 *                  "street"	=> "Lausse strasse",
-			 *                  "zipcode"	=> 1214
+			 *                  "zipcode"	=> "1214"
 			 *    ]
 			 * ]
 			 * </code>
 			 *
+			 * @throws \InvalidArgumentException if the shipment data passed in the array is invalid.
 			 * @params Array An Array containing the shipment parameters.
 			 * @link https://www.mercadopago.com.ar/developers/es/api-docs/basic-checkout/checkout-preferences/
 			 * @return Array An array containing shippment data in MP format.
@@ -52,7 +79,7 @@
 
 			public function shipmentToMP(Array $params){
 
-				$this->validateShopwareShipment($params);
+				$this->validateShipment($params);
 
 				$cost			=	floatval($params['price']) * $this->getCalculatedRate();
 
@@ -99,25 +126,40 @@
 			/**
 			 * Parse Shopware Basket items to MercadoPago items structure
 			 *
+			 * Expected structure example:
+			 *
+			 * <code>
+			 *    [
+			 *			[
+			 *				'articlename' => 'Napkins',
+			 *				'quantity'    => 1,
+			 *				'price'       => 11.2
+			 *			],
+			 *			[
+			 *				'articlename' => 'Sunglasses',
+			 *				'quantity'    => 2,
+			 *				'price'       => 30
+			 *			]
+			 *    ]
+			 * </code>
+			 *
 			 * @link https://www.mercadopago.com.ar/developers/es/api-docs/basic-checkout/checkout-preferences/
+			 * @throws \InvalidArgumentException if the basket data passed in the array is invalid.
 			 * @return Array An array containing items data in MP format.
 			 */
 
-			public function basketToMP(Array $basket){
+			public function basketToMP(Array $bItems){
 
-				$this->validateBasket($basket);
-				$this->setStoreCurrency($basket['sCurrencyName']);
 				$this->getCalculatedRate();
 
-				$content	=	$basket['content'];
 				$items	=	[];
 				$rate		=	$this->getRate();
 
-				foreach($content as $article){
+				foreach($bItems as $article){
+
+					$this->validateArticle($article);
 
 					$price	=	$rate * floatval(number_format($article['price'],2,'.',''));
-
-					$this->validateShopwareArticleStructure($article);
 
 					$items[]	=	[
 										"title"			=>	$article['articlename'],
@@ -132,20 +174,79 @@
 
 			}
 
+			/**
+			 * Creates an Array that contains the expected array structure for the \MP Client.
+			 *
+			 * Said structure is described below:
+			 *
+			 * <code>
+			 *  [
+			 *     'items'    => [
+			 *                     [
+			 *                      'articlename' => 'Napkins',
+			 *                      'quantity'    => 1,
+			 *                      'price'       => 11.2
+			 *                     ],
+			 *                     [
+			 *                      'articlename' => 'Sunglasses',
+			 *                      'quantity'    => 2,
+			 *                      'price'       => 30
+			 *                     ],
+			 *     ],
+			 *     'payer'    => [
+			 *                    'firstname' => 'Federico',
+			 *                    'lastname'  => 'Stange'
+			 *     ],
+			 *     'shipment' => [
+			 *                    'price'   => (float)
+			 *                    'address' => [
+			 *												'street'  => 'Lause strasse 1234',
+			 *												'zipcode' => '1234'
+			 *                    ]
+			 *
+			 *     ]
+			 *  ]
+			 *
+			 * </code>
+			 *
+			 * Each item in the code shown above will be converted to the expected mercadopago
+			 * structure.
+			 *
+			 * @see self::basketToMp
+			 * @see self::customerToMp
+			 * @see self::shipmentToMp
+			 *
+			 * @throws \InvalidArgumentException if any of the conversion methods 
+			 * receives invalid data an exception will be thrown by them.
+			 *
+			 * @return Array An Array containing the expected structure by mercado pago
+			 */
+
 			public function createMPPreferenceStructure(Array $params){
 
 				return [
-							'items'		=>	$this->basketToMp(isset($params['items'])			?	$params['items'] : []),
-							'payer'		=>	$this->customerToMp(isset($params['customer'])	?	$params['customer'] : []),
-							'shipments'	=>	$this->shipmentToMp(isset($params['shipment'])	?	$params['shipment'] : [])
+							'items'		=>	$this->basketToMp(
+																isset($params['items'])		?
+																$params['items'] : []
+							),
+							'payer'		=>	$this->customerToMp(
+																isset($params['customer'])	?	
+																$params['customer'] : []
+							),
+							'shipments'	=>	$this->shipmentToMp(
+																isset($params['shipment'])	?	
+																$params['shipment'] : []
+							)
 				];
 
 			}
 
 			/**
-			 * Returns the proper MercadoPago payment URL
+			 * Creates a mercado pago preference
 			 *
-			 * @return string
+			 * @params Array An array containing the structure described in self::createMPPreferenceStructure
+			 * @see self::createMPPreferenceStructure
+			 * @return Array Mercado Pago checkout preference array.
 			 */
 
 			public function createMPPreference(Array $params){
@@ -157,16 +258,32 @@
 
 			}
 
+			/**
+			 * Returns the checkout URL for mercado pago
+			 *
+			 * @throws \RuntimeException if it wasn't possible to create the mercadopago preference
+			 * @see self::createMPPreference
+			 * @return string The mercadopago checkout url
+			 */
+
 			public function getCheckoutUrl(Array $params,$mode='prod'){
 
 				$mode			=	strtolower($mode);
 				$preference	=	$this->createMPPreference($params);
 
-				return $mode == 'prod' ? $preference['response']['init_point'] : 
-												$peference['response']['sandbox_init_point'];
+				if(!$preference){
+
+					$msg	=	"Failed fetching MercadoPago preference data";
+
+					throw new \RuntimeException($msg);
+
+				}
+
+				return $mode == 'prod' ? 
+					$preference['response']['init_point'] : 
+					$peference['response']['sandbox_init_point'];
 
 			}
-
 
 			/**
 			 * Creates a payment response from an enlight controller request
@@ -175,7 +292,7 @@
 			 * @return \stange\mercadopago\payment\Response
 			 */
 
-			public function createIPNPaymentResponseFromEnlightRequest(\Enlight_Controller_Request_Request $request){
+			public function createIPNResponseFromRequest(\Enlight_Controller_Request_Request $request){
 
 				$response	=	new IPNPaymentResponse([
 																	'id'		=>	$request->get('id'),
@@ -189,23 +306,54 @@
 
 			}
 
-			public function validateBasket(Array $basket){
+			/** 
+			 * Validation: 
+			 * These methods will be reaplaced by shopware struct's 
+			 */
 
-				if(!isset($basket['content'])){
+			/**
+			 * Validate customer data.
+			 *
+			 * @throws \InvalidArgumentException firstname missing (code 1)
+			 * @throws \InvalidArgumentException lastname missing (code 2)
+			 * @throws \InvalidArgumentException email missing (code 3)
+			 * @throws \InvalidArgumentException invalid email (code 4)
+			 */
 
-					throw new \InvalidArgumentException("No basket content was set");
+			public function validateCustomer(Array $customer){
+
+				if(!isset($customer['firstname'])){
+
+					throw new \InvalidArgumentException("Missing customer firstname",1);
 
 				}
 
-				if(!isset($basket['sCurrencyName'])){
+				if(!isset($customer['lastname'])){
 
-					throw new \InvalidArgumentException("No sCurrencyName was specified");
+					throw new \InvalidArgumentException("Missing customer lastname",2);
+
+				}
+
+				if(!isset($customer['email'])){
+
+					throw new \InvalidArgumentException("Missing customer email",3);
+
+				}
+
+				if(!filter_var($customer['email'],\FILTER_VALIDATE_EMAIL)){
+
+					throw new \InvalidArgumentException("Invalid customer email",4);
 
 				}
 
 			}
 
-			public function validateShopwareShipment(Array $params){
+			/**
+			 * Validate shipment data
+			 * @throws \InvalidArgumentException if any data is missing
+			 */
+
+			public function validateShipment(Array $params){
 
 				if(!isset($params['price'])){
 
@@ -233,7 +381,12 @@
 
 			}
 
-			public function validateShopwareArticleStructure(Array $article){
+			/**
+			 * Validate article data
+			 * @throws \InvalidArgumentException if any data is missing
+			 */
+
+			public function validateArticle(Array $article){
 
 				if(!isset($article['articlename'])){
 

@@ -1,9 +1,17 @@
 <?php
 
+	/**
+	 * MercadoPago ShopWare plugin integration. 毘
+	 *
+	 * @license MIT (See the LICENSE file for more information)
+	 * @author Federico Stange <jpfstange@gmail.com>
+	 */
+
 	namespace StangeMercadoPago{
 
-		use \Shopware\Components\Console\Application;
 		use \Shopware\Components\Plugin	as	BaseShopwarePlugin;
+
+		use \Shopware\Components\Console\Application;
 		use \Shopware\Components\plugin\context\ActivateContext;
 		use \Shopware\Components\plugin\context\DeactivateContext;
 		use \Shopware\Components\plugin\context\InstallContext;

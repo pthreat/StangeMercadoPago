@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * This command creates a mercadopago test user, useful when you need to generate 
+ * fake payments.
+ */
+
 namespace StangeMercadoPago\Command{
 
 	use \Shopware\Commands\ShopwareCommand;

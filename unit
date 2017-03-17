@@ -1,0 +1,527 @@
+PHPUnit 5.7.14 by Sebastian Bergmann and contributors.
+
+.                                                                   1 / 1 (100%)array(259) {
+  [0]=>
+  string(4) "test"
+  [1]=>
+  string(5) "__get"
+  [2]=>
+  string(16) "setUpBeforeClass"
+  [3]=>
+  string(18) "tearDownAfterClass"
+  [4]=>
+  string(11) "__construct"
+  [5]=>
+  string(8) "toString"
+  [6]=>
+  string(5) "count"
+  [7]=>
+  string(9) "getGroups"
+  [8]=>
+  string(9) "setGroups"
+  [9]=>
+  string(14) "getAnnotations"
+  [10]=>
+  string(7) "getName"
+  [11]=>
+  string(7) "getSize"
+  [12]=>
+  string(7) "hasSize"
+  [13]=>
+  string(7) "isSmall"
+  [14]=>
+  string(8) "isMedium"
+  [15]=>
+  string(7) "isLarge"
+  [16]=>
+  string(15) "getActualOutput"
+  [17]=>
+  string(9) "hasOutput"
+  [18]=>
+  string(24) "doesNotPerformAssertions"
+  [19]=>
+  string(17) "expectOutputRegex"
+  [20]=>
+  string(18) "expectOutputString"
+  [21]=>
+  string(32) "hasPerformedExpectationsOnOutput"
+  [22]=>
+  string(22) "hasExpectationOnOutput"
+  [23]=>
+  string(20) "getExpectedException"
+  [24]=>
+  string(20) "setExpectedException"
+  [25]=>
+  string(26) "setExpectedExceptionRegExp"
+  [26]=>
+  string(15) "expectException"
+  [27]=>
+  string(19) "expectExceptionCode"
+  [28]=>
+  string(22) "expectExceptionMessage"
+  [29]=>
+  string(28) "expectExceptionMessageRegExp"
+  [30]=>
+  string(50) "setRegisterMockObjectsFromTestArgumentsRecursively"
+  [31]=>
+  string(34) "setExpectedExceptionFromAnnotation"
+  [32]=>
+  string(18) "setUseErrorHandler"
+  [33]=>
+  string(32) "setUseErrorHandlerFromAnnotation"
+  [34]=>
+  string(17) "checkRequirements"
+  [35]=>
+  string(9) "getStatus"
+  [36]=>
+  string(11) "markAsRisky"
+  [37]=>
+  string(16) "getStatusMessage"
+  [38]=>
+  string(9) "hasFailed"
+  [39]=>
+  string(3) "run"
+  [40]=>
+  string(7) "runBare"
+  [41]=>
+  string(7) "runTest"
+  [42]=>
+  string(17) "verifyMockObjects"
+  [43]=>
+  string(7) "setName"
+  [44]=>
+  string(15) "setDependencies"
+  [45]=>
+  string(15) "hasDependencies"
+  [46]=>
+  string(18) "setDependencyInput"
+  [47]=>
+  string(36) "setBeStrictAboutChangesToGlobalState"
+  [48]=>
+  string(16) "setBackupGlobals"
+  [49]=>
+  string(25) "setBackupStaticAttributes"
+  [50]=>
+  string(27) "setRunTestInSeparateProcess"
+  [51]=>
+  string(22) "setPreserveGlobalState"
+  [52]=>
+  string(14) "setInIsolation"
+  [53]=>
+  string(13) "isInIsolation"
+  [54]=>
+  string(9) "getResult"
+  [55]=>
+  string(9) "setResult"
+  [56]=>
+  string(17) "setOutputCallback"
+  [57]=>
+  string(19) "getTestResultObject"
+  [58]=>
+  string(19) "setTestResultObject"
+  [59]=>
+  string(18) "registerMockObject"
+  [60]=>
+  string(6) "iniSet"
+  [61]=>
+  string(9) "setLocale"
+  [62]=>
+  string(14) "getMockBuilder"
+  [63]=>
+  string(10) "createMock"
+  [64]=>
+  string(20) "createConfiguredMock"
+  [65]=>
+  string(17) "createPartialMock"
+  [66]=>
+  string(7) "getMock"
+  [67]=>
+  string(44) "getMockWithoutInvokingTheOriginalConstructor"
+  [68]=>
+  string(12) "getMockClass"
+  [69]=>
+  string(23) "getMockForAbstractClass"
+  [70]=>
+  string(15) "getMockFromWsdl"
+  [71]=>
+  string(15) "getMockForTrait"
+  [72]=>
+  string(17) "getObjectForTrait"
+  [73]=>
+  string(10) "prophesize"
+  [74]=>
+  string(19) "addToAssertionCount"
+  [75]=>
+  string(16) "getNumAssertions"
+  [76]=>
+  string(3) "any"
+  [77]=>
+  string(5) "never"
+  [78]=>
+  string(7) "atLeast"
+  [79]=>
+  string(11) "atLeastOnce"
+  [80]=>
+  string(4) "once"
+  [81]=>
+  string(7) "exactly"
+  [82]=>
+  string(6) "atMost"
+  [83]=>
+  string(2) "at"
+  [84]=>
+  string(11) "returnValue"
+  [85]=>
+  string(14) "returnValueMap"
+  [86]=>
+  string(14) "returnArgument"
+  [87]=>
+  string(14) "returnCallback"
+  [88]=>
+  string(10) "returnSelf"
+  [89]=>
+  string(14) "throwException"
+  [90]=>
+  string(18) "onConsecutiveCalls"
+  [91]=>
+  string(16) "usesDataProvider"
+  [92]=>
+  string(15) "dataDescription"
+  [93]=>
+  string(18) "getDataSetAsString"
+  [94]=>
+  string(15) "getProvidedData"
+  [95]=>
+  string(12) "createResult"
+  [96]=>
+  string(18) "handleDependencies"
+  [97]=>
+  string(5) "setUp"
+  [98]=>
+  string(19) "assertPreConditions"
+  [99]=>
+  string(20) "assertPostConditions"
+  [100]=>
+  string(8) "tearDown"
+  [101]=>
+  string(19) "onNotSuccessfulTest"
+  [102]=>
+  string(15) "prepareTemplate"
+  [103]=>
+  string(22) "getMockObjectGenerator"
+  [104]=>
+  string(17) "assertArrayHasKey"
+  [105]=>
+  string(17) "assertArraySubset"
+  [106]=>
+  string(20) "assertArrayNotHasKey"
+  [107]=>
+  string(14) "assertContains"
+  [108]=>
+  string(23) "assertAttributeContains"
+  [109]=>
+  string(17) "assertNotContains"
+  [110]=>
+  string(26) "assertAttributeNotContains"
+  [111]=>
+  string(18) "assertContainsOnly"
+  [112]=>
+  string(29) "assertContainsOnlyInstancesOf"
+  [113]=>
+  string(27) "assertAttributeContainsOnly"
+  [114]=>
+  string(21) "assertNotContainsOnly"
+  [115]=>
+  string(30) "assertAttributeNotContainsOnly"
+  [116]=>
+  string(11) "assertCount"
+  [117]=>
+  string(20) "assertAttributeCount"
+  [118]=>
+  string(14) "assertNotCount"
+  [119]=>
+  string(23) "assertAttributeNotCount"
+  [120]=>
+  string(12) "assertEquals"
+  [121]=>
+  string(21) "assertAttributeEquals"
+  [122]=>
+  string(15) "assertNotEquals"
+  [123]=>
+  string(24) "assertAttributeNotEquals"
+  [124]=>
+  string(11) "assertEmpty"
+  [125]=>
+  string(20) "assertAttributeEmpty"
+  [126]=>
+  string(14) "assertNotEmpty"
+  [127]=>
+  string(23) "assertAttributeNotEmpty"
+  [128]=>
+  string(17) "assertGreaterThan"
+  [129]=>
+  string(26) "assertAttributeGreaterThan"
+  [130]=>
+  string(24) "assertGreaterThanOrEqual"
+  [131]=>
+  string(33) "assertAttributeGreaterThanOrEqual"
+  [132]=>
+  string(14) "assertLessThan"
+  [133]=>
+  string(23) "assertAttributeLessThan"
+  [134]=>
+  string(21) "assertLessThanOrEqual"
+  [135]=>
+  string(30) "assertAttributeLessThanOrEqual"
+  [136]=>
+  string(16) "assertFileEquals"
+  [137]=>
+  string(19) "assertFileNotEquals"
+  [138]=>
+  string(22) "assertStringEqualsFile"
+  [139]=>
+  string(25) "assertStringNotEqualsFile"
+  [140]=>
+  string(16) "assertIsReadable"
+  [141]=>
+  string(19) "assertNotIsReadable"
+  [142]=>
+  string(16) "assertIsWritable"
+  [143]=>
+  string(19) "assertNotIsWritable"
+  [144]=>
+  string(21) "assertDirectoryExists"
+  [145]=>
+  string(24) "assertDirectoryNotExists"
+  [146]=>
+  string(25) "assertDirectoryIsReadable"
+  [147]=>
+  string(28) "assertDirectoryNotIsReadable"
+  [148]=>
+  string(25) "assertDirectoryIsWritable"
+  [149]=>
+  string(28) "assertDirectoryNotIsWritable"
+  [150]=>
+  string(16) "assertFileExists"
+  [151]=>
+  string(19) "assertFileNotExists"
+  [152]=>
+  string(20) "assertFileIsReadable"
+  [153]=>
+  string(23) "assertFileNotIsReadable"
+  [154]=>
+  string(20) "assertFileIsWritable"
+  [155]=>
+  string(23) "assertFileNotIsWritable"
+  [156]=>
+  string(10) "assertTrue"
+  [157]=>
+  string(13) "assertNotTrue"
+  [158]=>
+  string(11) "assertFalse"
+  [159]=>
+  string(14) "assertNotFalse"
+  [160]=>
+  string(10) "assertNull"
+  [161]=>
+  string(13) "assertNotNull"
+  [162]=>
+  string(12) "assertFinite"
+  [163]=>
+  string(14) "assertInfinite"
+  [164]=>
+  string(9) "assertNan"
+  [165]=>
+  string(23) "assertClassHasAttribute"
+  [166]=>
+  string(26) "assertClassNotHasAttribute"
+  [167]=>
+  string(29) "assertClassHasStaticAttribute"
+  [168]=>
+  string(32) "assertClassNotHasStaticAttribute"
+  [169]=>
+  string(24) "assertObjectHasAttribute"
+  [170]=>
+  string(27) "assertObjectNotHasAttribute"
+  [171]=>
+  string(10) "assertSame"
+  [172]=>
+  string(19) "assertAttributeSame"
+  [173]=>
+  string(13) "assertNotSame"
+  [174]=>
+  string(22) "assertAttributeNotSame"
+  [175]=>
+  string(16) "assertInstanceOf"
+  [176]=>
+  string(25) "assertAttributeInstanceOf"
+  [177]=>
+  string(19) "assertNotInstanceOf"
+  [178]=>
+  string(28) "assertAttributeNotInstanceOf"
+  [179]=>
+  string(18) "assertInternalType"
+  [180]=>
+  string(27) "assertAttributeInternalType"
+  [181]=>
+  string(21) "assertNotInternalType"
+  [182]=>
+  string(30) "assertAttributeNotInternalType"
+  [183]=>
+  string(12) "assertRegExp"
+  [184]=>
+  string(15) "assertNotRegExp"
+  [185]=>
+  string(14) "assertSameSize"
+  [186]=>
+  string(17) "assertNotSameSize"
+  [187]=>
+  string(25) "assertStringMatchesFormat"
+  [188]=>
+  string(28) "assertStringNotMatchesFormat"
+  [189]=>
+  string(29) "assertStringMatchesFormatFile"
+  [190]=>
+  string(32) "assertStringNotMatchesFormatFile"
+  [191]=>
+  string(22) "assertStringStartsWith"
+  [192]=>
+  string(25) "assertStringStartsNotWith"
+  [193]=>
+  string(20) "assertStringEndsWith"
+  [194]=>
+  string(23) "assertStringEndsNotWith"
+  [195]=>
+  string(26) "assertXmlFileEqualsXmlFile"
+  [196]=>
+  string(29) "assertXmlFileNotEqualsXmlFile"
+  [197]=>
+  string(28) "assertXmlStringEqualsXmlFile"
+  [198]=>
+  string(31) "assertXmlStringNotEqualsXmlFile"
+  [199]=>
+  string(30) "assertXmlStringEqualsXmlString"
+  [200]=>
+  string(33) "assertXmlStringNotEqualsXmlString"
+  [201]=>
+  string(23) "assertEqualXMLStructure"
+  [202]=>
+  string(10) "assertThat"
+  [203]=>
+  string(10) "assertJson"
+  [204]=>
+  string(32) "assertJsonStringEqualsJsonString"
+  [205]=>
+  string(35) "assertJsonStringNotEqualsJsonString"
+  [206]=>
+  string(30) "assertJsonStringEqualsJsonFile"
+  [207]=>
+  string(33) "assertJsonStringNotEqualsJsonFile"
+  [208]=>
+  string(28) "assertJsonFileEqualsJsonFile"
+  [209]=>
+  string(31) "assertJsonFileNotEqualsJsonFile"
+  [210]=>
+  string(10) "logicalAnd"
+  [211]=>
+  string(9) "logicalOr"
+  [212]=>
+  string(10) "logicalNot"
+  [213]=>
+  string(10) "logicalXor"
+  [214]=>
+  string(8) "anything"
+  [215]=>
+  string(6) "isTrue"
+  [216]=>
+  string(8) "callback"
+  [217]=>
+  string(7) "isFalse"
+  [218]=>
+  string(6) "isJson"
+  [219]=>
+  string(6) "isNull"
+  [220]=>
+  string(8) "isFinite"
+  [221]=>
+  string(10) "isInfinite"
+  [222]=>
+  string(5) "isNan"
+  [223]=>
+  string(9) "attribute"
+  [224]=>
+  string(8) "contains"
+  [225]=>
+  string(12) "containsOnly"
+  [226]=>
+  string(23) "containsOnlyInstancesOf"
+  [227]=>
+  string(11) "arrayHasKey"
+  [228]=>
+  string(7) "equalTo"
+  [229]=>
+  string(16) "attributeEqualTo"
+  [230]=>
+  string(7) "isEmpty"
+  [231]=>
+  string(10) "isWritable"
+  [232]=>
+  string(10) "isReadable"
+  [233]=>
+  string(15) "directoryExists"
+  [234]=>
+  string(10) "fileExists"
+  [235]=>
+  string(11) "greaterThan"
+  [236]=>
+  string(18) "greaterThanOrEqual"
+  [237]=>
+  string(17) "classHasAttribute"
+  [238]=>
+  string(23) "classHasStaticAttribute"
+  [239]=>
+  string(18) "objectHasAttribute"
+  [240]=>
+  string(11) "identicalTo"
+  [241]=>
+  string(12) "isInstanceOf"
+  [242]=>
+  string(6) "isType"
+  [243]=>
+  string(8) "lessThan"
+  [244]=>
+  string(15) "lessThanOrEqual"
+  [245]=>
+  string(24) "matchesRegularExpression"
+  [246]=>
+  string(7) "matches"
+  [247]=>
+  string(16) "stringStartsWith"
+  [248]=>
+  string(14) "stringContains"
+  [249]=>
+  string(14) "stringEndsWith"
+  [250]=>
+  string(7) "countOf"
+  [251]=>
+  string(4) "fail"
+  [252]=>
+  string(13) "readAttribute"
+  [253]=>
+  string(18) "getStaticAttribute"
+  [254]=>
+  string(18) "getObjectAttribute"
+  [255]=>
+  string(18) "markTestIncomplete"
+  [256]=>
+  string(15) "markTestSkipped"
+  [257]=>
+  string(8) "getCount"
+  [258]=>
+  string(10) "resetCount"
+}
+
+
+Time: 156 ms, Memory: 25.25MB
+
+OK (1 test, 4 assertions)

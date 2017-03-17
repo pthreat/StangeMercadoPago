@@ -53,7 +53,7 @@ That's it! You should be ready to use the MercadoPago checkout plugin!
 
 NOTE: Make sure that everytime you configure this plugin you clear your shop cache (See TODO list)
 
-###UI MODES
+### UI MODES
 
 (2017-03-05) As of this date, the iframe UI mode is not working correctly (MercadoPago Problem)
 
@@ -72,6 +72,11 @@ https://www.mercadopago.com.ar/developers/es/solutions/payments/custom-checkout/
 
 Added IPN Notification support for basic checkout
 Added a handy command for developers to be able to create mercadopago test users (stange:mercadopago:create:test-user)
+
+### Running tests
+
+For running the integration tests your plugin must be properly configured.
+While testing, please, use the Shopware's shipped phpunit binary located at shopware-folder/vendor/bin/phpunit
 
 ### TODO
 

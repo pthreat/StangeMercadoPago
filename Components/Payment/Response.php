@@ -1,8 +1,20 @@
 <?php
 
+	/**
+	 * This class is used for handling and parsing IPN responses 
+	 * through the mercado pago API.
+	 *
+	 * @author Federico Stange <jpfstange@gmail.com>
+	 * @license MIT (See the LICENSE file for more information)
+	 */
+
 	namespace StangeMercadoPago\Components\Payment{
 
 		class Response{
+
+			/**
+			 * Taken from ShopWare's payment statuses
+			 */
 
 			const PAYMENTSTATUSPARTIALLYPAID	=	11;
 			const PAYMENTSTATUSPAID				=	12;
@@ -19,7 +31,7 @@
 
 			/**
 			 * Contains the payment IPN (Notification id)
-			 * @var string Payment topic
+			 * @var string|int Payment topic
 			 */
 
 			private	$id		=	NULL;
