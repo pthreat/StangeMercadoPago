@@ -193,7 +193,7 @@
 			 *                      'price'       => 30
 			 *                     ],
 			 *     ],
-			 *     'payer'    => [
+			 *     'customer' => [
 			 *                    'firstname' => 'Federico',
 			 *                    'lastname'  => 'Stange'
 			 *     ],

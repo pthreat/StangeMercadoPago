@@ -112,7 +112,7 @@
 				break;
 
 				case 'iframe':
-				case 'phpredirect':
+				case 'php_redirect':
 					$action	=	$uiMode;
 				break;
 
@@ -142,14 +142,13 @@
 
 			return $service->getCheckoutUrl([
 											'items'		=>	$basket['content'],
-											'payer'		=>	$this->getUser()['additional']['user'],
+											'customer'	=>	$this->getUser()['additional']['user'],
 											'shipment'	=>	[
 																	'price'		=>	$this->getShipment(),
 																	'address'	=>	$this->getUser()['shippingaddress']
 											]
 
 			]);
-			);
 
 		}
 

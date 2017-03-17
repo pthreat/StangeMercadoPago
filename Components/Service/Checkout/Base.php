@@ -77,7 +77,7 @@
 									'id'					=>	$params->get('CLIENT_ID'),
 									'secret'				=>	$params->get('CLIENT_SECRET'),
 									'token'				=>	$params->get('TOKEN'),
-									'app_currency'		=>	$params->get('APP_CURRENCY')
+									'app_currency'		=>	$params->get('CURRENCY')
 					];
 
 				}

@@ -1,5 +1,16 @@
 {
 	"name": "stange/shopware-mercadopago",
+	"type": "library",
+	"description": "A MercadoPago integration with ShopWare AG",
+	"keywords": ["shopware","mercadopago","mercadolibre","checkout"],
+	"license": "MIT",
+	"authors": [
+					{
+						"name": "Federico Stange",
+						"email": "jpfstange@gmail.com",
+						"role": "Developer"
+					}
+	],
 	"require": {
 					"mercadopago/sdk": "0.5.2"
 	},
