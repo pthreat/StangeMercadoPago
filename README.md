@@ -95,11 +95,11 @@ NOTE: If you are using test users, make sure to login with your seller test user
 
 The plugin admits several UI modes for operation:
 
-[-] php redirect
-[-] Iframe
-[-] Javascript redirect
-[-] Javascript modal
-[-] Javascript new window
+- [x] php redirect
+- [x] Iframe
+- [x] Javascript redirect
+- [x] Javascript modal
+- [x] Javascript new window
 
 (2017-03-05) As of this date, the iframe UI mode is not working correctly (MercadoPago Problem)
 The Javascript popup and redirect modes are highly discouraged since most browsers will block said popups.
