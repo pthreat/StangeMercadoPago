@@ -51,9 +51,9 @@ namespace StangeMercadoPago\Command{
 									$input->getArgument('secret')
 			);
 
-			$r		= $mp->post('/users/test_user',"{\"site_id\":\"{$input->getArgument('site-id')}\"}");
-
-			var_dump($r);
+			$data	=	json_encode(['site_id'=>$input->getArgument('site-id')]);
+			
+			$r		=	$mp->post('/users/test_user',$data);
 
 			if(!$r){
 
