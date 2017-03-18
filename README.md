@@ -165,6 +165,28 @@ For running the integration tests your plugin must be properly configured.
 While testing, please, use the Shopware's shipped phpunit binary located at shopware-folder/vendor/bin/phpunit
 
 ---
+## For coders
+
+### Coding style
+The indentation style of the code must be respected. I use tabs only. Set your editor to have a tab stop of 3 for the code to display correctly in your editor.
+
+### Namespaces
+
+A personal preference of mine is to surround with the namespace declaration.
+
+```php
+namespace StangeMercadoPago{
+   class Test{
+	}
+}
+```
+I believe this way makes you conscious that you are working within a namespace and not in the global namespace.
+
+### Collaborating
+
+Simply send a pull request through github, send me an email or add an issue in github.
+
+---
 
 ## TODO
 
