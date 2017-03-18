@@ -31,7 +31,7 @@
 			 *		'email'		=>	'jpfstange@gmail.com'
 			 *	]
 			 * </code>
-			 *
+			 * @param Array $customerData An array containing the structure shown above
 			 * @link https://www.mercadopago.com.ar/developers/es/api-docs/basic-checkout/checkout-preferences/
 			 * @throws \InvalidArgumentException if the customer data passed in the array is invalid.
 			 * @return Array An array containing customer data in MP format.
@@ -72,7 +72,7 @@
 			 * </code>
 			 *
 			 * @throws \InvalidArgumentException if the shipment data passed in the array is invalid.
-			 * @params Array An Array containing the shipment parameters.
+			 * @param Array $params An Array containing the shipment parameters.
 			 * @link https://www.mercadopago.com.ar/developers/es/api-docs/basic-checkout/checkout-preferences/
 			 * @return Array An array containing shippment data in MP format.
 			 */
@@ -143,6 +143,7 @@
 			 *    ]
 			 * </code>
 			 *
+			 * @param Array $bItems Basket items (See the expected structure above)
 			 * @link https://www.mercadopago.com.ar/developers/es/api-docs/basic-checkout/checkout-preferences/
 			 * @throws \InvalidArgumentException if the basket data passed in the array is invalid.
 			 * @return Array An array containing items data in MP format.
@@ -195,7 +196,7 @@
 			 *     ],
 			 *     'customer' => [
 			 *                    'firstname' => 'Federico',
-			 *                    'lastname'  => 'Stange'
+			 *                    'lastname'  => 'Stange',
 			 *     ],
 			 *     'shipment' => [
 			 *                    'price'   => (float)
@@ -216,6 +217,7 @@
 			 * @see self::customerToMp
 			 * @see self::shipmentToMp
 			 *
+			 * @param  Array $params An array containing the structure described above
 			 * @throws \InvalidArgumentException if any of the conversion methods 
 			 * receives invalid data an exception will be thrown by them.
 			 *
@@ -244,7 +246,7 @@
 			/**
 			 * Creates a mercado pago preference
 			 *
-			 * @params Array An array containing the structure described in self::createMPPreferenceStructure
+			 * @param Array $params An array containing the structure described in self::createMPPreferenceStructure
 			 * @see self::createMPPreferenceStructure
 			 * @return Array Mercado Pago checkout preference array.
 			 */
@@ -261,6 +263,8 @@
 			/**
 			 * Returns the checkout URL for mercado pago
 			 *
+			 * @param Array $params An array containing the structure described in self::createMPPreference
+			 * @param string $mode (production or sandbox)
 			 * @throws \RuntimeException if it wasn't possible to create the mercadopago preference
 			 * @see self::createMPPreference
 			 * @return string The mercadopago checkout url
@@ -288,7 +292,7 @@
 			/**
 			 * Creates a payment response from an enlight controller request
 			 *
-			 * @param $request \Enlight_Controller_Request_Request
+			 * @param \Enlight_Controller_Request_Request $request
 			 * @return \stange\mercadopago\payment\Response
 			 */
 
@@ -314,6 +318,7 @@
 			/**
 			 * Validate customer data.
 			 *
+			 * @param Array $customer Customer data.
 			 * @throws \InvalidArgumentException firstname missing (code 1)
 			 * @throws \InvalidArgumentException lastname missing (code 2)
 			 * @throws \InvalidArgumentException email missing (code 3)
@@ -350,6 +355,7 @@
 
 			/**
 			 * Validate shipment data
+			 * @param Array $params Shipment data
 			 * @throws \InvalidArgumentException if any data is missing
 			 */
 
@@ -382,7 +388,8 @@
 			}
 
 			/**
-			 * Validate article data
+			 * Validate a single article
+			 * @param Array $article A single article
 			 * @throws \InvalidArgumentException if any data is missing
 			 */
 
