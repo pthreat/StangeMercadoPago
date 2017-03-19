@@ -18,6 +18,7 @@
 		use \Shopware\Components\plugin\context\UninstallContext;
 
 		use \StangeMercadoPago\Command\CreateTestUser	as	CreateTestUserCommand;
+		use \StangeMercadoPago\Command\CurrencyExchange	as	CurrencyExchangeCommand;
 
 		class StangeMercadoPago extends BaseShopwarePlugin{
 
@@ -112,6 +113,7 @@
 				$this->registerMyComponents();
 
 				$application->add(new CreateTestUserCommand());
+				$application->add(new CurrencyExchangeCommand());
 
 			}
 
