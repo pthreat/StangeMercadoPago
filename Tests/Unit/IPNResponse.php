@@ -13,13 +13,9 @@
 	 */
 
 	use \StangeMercadoPago\Test\Base	as	BaseTest;
-	use \StangeMercadoPago\Components\Payment\Response	as	IPNPaymentResponse;
+	use \StangeMercadoPago\Components\Payment\Response\IPN	as	IPNPaymentResponse;
 
 	class IPNResponseTest extends BaseTest{
-
-		protected static $ensureLoadedPlugins	=	[
-																	'StangeMercadoPago'
-		];
 
 		public function testIPNResponse(){
 

@@ -2,6 +2,7 @@
 <phpunit backupGlobals="false" backupStaticAttributes="false" bootstrap="./Tests/Bootstrap.php">
     <testsuite name="BasicCheckoutService">
 		<file>./Tests/Integration/BasicCheckoutService.php</file>
+		<file>./Tests/Unit/Response.php</file>
 		<file>./Tests/Unit/IPNResponse.php</file>
     </testsuite>
 </phpunit>

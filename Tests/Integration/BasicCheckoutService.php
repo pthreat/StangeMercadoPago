@@ -13,38 +13,9 @@
 
 	class BasicCheckoutServiceTest extends BaseTest{
 
-		protected static $ensureLoadedPlugins	=	[
-																	'StangeMercadoPago'
-		];
-
-		public function testServiceInstantiation(){
-
-			static $service;
-
-			if($service){
-
-				return $service;
-
-			}
-
-			$params	=	[
-								'id'					=>	$this->CLIENT_ID,
-								'secret'				=>	$this->CLIENT_SECRET,
-								'token'				=>	$this->TOKEN,
-								'app_currency'		=>	$this->CURRENCY,
-								'store_currency'	=>	'EUR'
-			];
-
-
-			$service	=	new BasicCheckoutService($params);;
-
-			return $service;
-
-		}
-
 		public function testValuesSetInBasicCheckoutService(){
 
-			$service	=	$this->testServiceInstantiation();
+			$service	=	$this->getService();
 
 			$this->assertNotNull($service->getAppCurrency());
 			$this->assertNotNull($service->getStoreCurrency());
@@ -55,7 +26,7 @@
 
 		public function testCalculatedAPIExchangeRate(){
 
-			$service	=	$this->testServiceInstantiation();
+			$service	=	$this->getService();
 
 			$this->assertInternalType('double',$service->getCalculatedRate());
 			$this->assertInternalType('double',$service->getRate());
@@ -64,7 +35,7 @@
 
 		public function mockAndTestBasicCheckoutURLGeneration(){
 
-			$service	=	$this->testServiceInstantiation();
+			$service	=	$this->getService();
 
 			/**
 			 * Simulate some checkout data
