@@ -69,42 +69,14 @@ Refresh the shop cache (Under Configuration -> Cache/Performance -> Clear Shop C
 
 That's it! You should be ready to use the MercadoPago checkout plugin!
 
-NOTE: Make sure that everytime you configure this plugin you clear your shop cache (See TODO list)
-
-
 ### IPN: Instant payment notifications
 
-For getting to save any kind of payment in your shopware store through basic checkout, you need to configure MercadoPago's 
-Instant Payment Notifications (or IPN's for short).
-
-For doing so, you must login into your mercado pago developer account and go to 
-
-https://www.mercadopago.com.ar/ipn-notifications
-
-Please notice that this link varies according to your country
-
-Once there, enter your shop URL with the following path:
-
-http://YOUR-shop-name.com*/MercadoPago/ipn*
-
-Once this is set, you can start receiveing payment notifications from mercadopago into your Shopware store.
-
-NOTE: If you are using test users, make sure to login with your seller test user and configure the IPN.
+There's no additional need to configure any URL on the MercadoPago backend.
+Just have your store available to the outside world internet and you will get Instant Payment Notifications.
 
 ### UI MODE Configuration
 
-The plugin admits several UI modes for operation:
-
-- [x] php redirect
-- [x] Iframe
-- [x] Javascript redirect
-- [x] Javascript modal
-- [x] Javascript new window
-
-(2017-03-05) As of this date, the iframe UI mode is not working correctly (MercadoPago Problem)
-The Javascript popup and redirect modes are highly discouraged since most browsers will block said popups.
-
-The most safe option here is to use the php redirect mode.
+The UI MODE option was removed to provide simplicity and correct operation of the plugin.
 
 ### Application currency configuration
 
@@ -118,6 +90,23 @@ The plugin admits two configuration modes, production and sandbox
 is to use production mode and use testing credit cards and testing users provided here: 
 
 https://www.mercadopago.com.ar/developers/es/solutions/payments/custom-checkout/test-cards/
+
+### Console commands
+
+This plugin makes available the following console commands:
+
+#### Create a mercado pago test user
+
+```
+php bin/console stange:mercadopago:create:test-user
+```
+#### Check the exchange rate between two currencies
+
+```
+php bin/console stange:mercadopago:currency:exchange <from_curency> <to_currency> [amount]
+```
+
+---
 
 ### Using test cards and test users:
 
@@ -152,13 +141,6 @@ Same goes for the expiration date, but remember that the expiration date should 
 
 ---
 
-## UPDATES
-
-Added IPN Notification support for basic checkout
-Added a handy command for developers to be able to create mercadopago test users (stange:mercadopago:create:test-user)
-
----
-
 ## Running tests
 
 For running the integration tests your plugin must be properly configured.
@@ -188,9 +170,18 @@ Simply send a pull request through github, send me an email or add an issue in g
 
 ---
 
+## CHANGELOG
+
+#### Version 1.0.1
+
+- [ ] Removed UI Modes for simplicity and correct plugin operation
+- [ ] Added success, cancel and pending payment pages. When the user finishes buying on mercadopago the user will be redirected to your shop's success, cancel or pending page. Note that these pages can not be trusted for finishing the checkout process since mercadopago has a delay of 5 seconds in which the customer may close the window. For this reason, Instant Payment Notifications are prefered instead.
+- [ ] Added small localization .ini files (Deutsch, English)
+
+---
+
 ## TODO
 
-- [ ]	Refresh config cache for easy managment (i.e: Not having to refresh the cache manually from the backend every time the plugin is configured)
-- [ ]	Add support for custom checkout methods (On store through mercadopago js sdk)
-- [ ] Enable other types of checkout (Rapipago, PagoFacil)
+- [ ] Enable edition of allowed checkout methods through the backend
+- [ ] Enable edition of checkout methods preferences (cc installments, etc)
 
