@@ -2,6 +2,7 @@
 
 	/**
 	 * This plugin enables the usage of the MercadoPago API for MercadoLibre in ShopWare
+	 *
 	 * @license MIT
 	 * @author Federico Stange
 	 */
@@ -9,30 +10,24 @@
 	/**
 	 * As MercadoPago does not returns a CSRF token on basic checkout, we have to white list the IPN action 
 	 * We do this in order to receive IPN's (Instant Payment Notifications) from their servers.
+	 * If we don't white list said action a CSRF token exception will be thrown.
 	 */
 
-	use Shopware\Components\CSRFWhitelistAware as WhiteList;
-	use StangeMercadoPago\Controller\Base	as	BaseController;
+	use Shopware\Components\CSRFWhitelistAware;
 
-	class Shopware_Controllers_Frontend_MercadoPagoBasic extends \Shopware_Controllers_Frontend_Payment implements WhiteList{
+	use StangeMercadoPago\Controller\Base				as	BaseController;
+	use StangeMercadoPago\Components\Payment\Base	as	BasePayment;
 
+	class Shopware_Controllers_Frontend_MercadoPagoBasic extends \Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware{
 
 		/**
 		 * Small shortcut to access the plugin throughout the controller
 		 * @var \Shopware\Components\Plugin $plugin 
 		 */
 
-		private	$plugin	=	NULL;
+		private	$plugin		=	NULL;
 
 		public function preDispatch(){
-
-			/** In case the basket is empty, redirect to checkout **/
-
-			if(empty($this->getBasket())){
-
-				return $this->redirect(['controller' => 'index']);
-
-			}
 
 			/**
 			 * @var \Shopware\Components\Plugin $plugin 
@@ -52,12 +47,6 @@
 
 		}
 
-		public function getPlugin(){
-
-			return $this->plugin;
-
-		}
-
 		/**
 		 * Return a list of white listed (non-csrf protected) actions
 		 *
@@ -65,7 +54,7 @@
 		 * @see self::ipnAction
 		 */
 
-		public function getWhiteListedCSRFActions(){
+		public function getWhitelistedCSRFActions(){
 
 			return [
 						'ipn'
@@ -74,55 +63,42 @@
 		}
 
 		/**
-		 * The index action acts as a simple entry point to redirect 
-		 * to the configured ui mode in the backend.
+		 * The index action used to choose the UI mode for the end user, but since most UI modes
+		 * from mercadopago are unstable, the UI mode option has been removed in this version
+		 * in favor of redirecting *directly* to mercadopago.
 		 */
 
 		public function indexAction(){
 
-			$basicCheckoutAction	=	$this->getActionForUIMode($this->getPlugin()->getConfig('uimode'));
+			/** In case the basket is empty, redirect to checkout **/
 
-			return $this->redirect([
-											'action'			=>	strtolower($basicCheckoutAction),
-											'forceSecure'	=>	TRUE
-			]);
+			if(empty($this->getBasket())){
 
-		}
-
-		/**
-		 * Determines the basic checkout action according to the configured ui mode
-		 *
-		 * @throws \InvalidArgumentException if the ui mode is not recognized.
-		 * @return string The action to redirect the client to. 
-		 */
-
-		private function getActionForUiMode($uiMode){
-
-			/**
-			 * According to which uimode was selected decide what is the action to be executed
-			 */
-
-			switch($uiMode){
-
-				case 'popup':
-				case 'blank':
-				case 'redirect':
-				case 'modal':
-					$action	=	'javascript';
-				break;
-
-				case 'iframe':
-				case 'php_redirect':
-					$action	=	$uiMode;
-				break;
-
-				default:
-					throw new \InvalidArgumentException("Invalid ui mode \"$uiMode\"");
-				break;
+				return $this->redirect(['controller' => 'index']);
 
 			}
 
-			return $action;
+			/** 
+			 * Save the order before going through mercadopago, set
+			 * the order in "In progress" status.
+			 */
+
+			$paymentId		=	$this->createPaymentUniqueId();
+
+			$this->saveOrder(
+									$paymentId,
+									$paymentId,
+									BasePayment::PAYMENTSTATUSOPEN
+			);
+
+			$basket	=	$this->getBasket();
+
+			$this->redirect(
+									$this->getCheckoutUrl(
+																	$paymentId,
+																	$basket['sCurrencyName']
+									)
+			);
 
 		}
 
@@ -132,80 +108,102 @@
 		 * @return string A MercadoPago basic checkout URL.
 		 */
 
-		private function getCheckoutUrl(){
+		private function getCheckoutUrl($paymentId,$storeCurrency){
 
-			$basket	=	$this->getBasket();
+			/** 
+			 * Set the STORE_CURRENCY parameter in the configuration object
+			 * This parameter is dynamic since the end user is the one who selects 
+			 * the currency to be used, ergo, it is not configurable through the backend 
+			 * and we have to add it to the configuration object.
+			 */
+			
+			$this->get('config')['STORE_CURRENCY']	=	$storeCurrency;
+			$this->get('config')['CURRENCY']			=	$this->plugin->getConfig('CURRENCY');
 
 			$service	=	$this->getService();
 
-			$service->setStoreCurrency($basket['sCurrencyName']);
+			$router	=	$this->Front()->Router();
 
-			return $service->getCheckoutUrl([
-											'items'		=>	$basket['content'],
-											'customer'	=>	$this->getUser()['additional']['user'],
-											'shipment'	=>	[
-																	'price'		=>	$this->getShipment(),
-																	'address'	=>	$this->getUser()['shippingaddress']
-											]
+			$service->setIPNUrl($router->assemble(['action'=>'ipn','forceSecure'=>FALSE]));
+			$service->setSuccessUrl($router->assemble(['action'=>'success','forceSecure'=>TRUE]));
+			$service->setCancelUrl($router->assemble(['action'=>'cancel','forceSecure'=>TRUE]));
+			$service->setPendingUrl($router->assemble(['action'=>'pending','forceSecure'=>TRUE]));
 
+			$service->setIPNUrl('http://190.11.60.224/payment.php');
+
+			$service->setPaymentId($paymentId);
+			$service->setStoreCurrency($storeCurrency);
+
+			$url	=	$service->getCheckoutUrl([
+				'items'		=>	$this->getBasket()['content'],
+				'customer'	=>	$this->getUser()['additional']['user'],
+				'shipment'	=>	[
+										'price'		=>	$this->getShipment(),
+										'address'	=>	$this->getUser()['shippingaddress']
+				]
 			]);
 
-		}
-
-		/**
-		 * The javascript action takes in several ways of displaying itself.
-		 *
-		 * Said ways can be one of the following:
-		 *
-		 * redirect	: redirects to the mercadopago checkout process leaving the shop
-		 * modal		: Creates an html modal box inside of your shop
-		 * popup		: Opens up a popup showing the mercadopago checkout process (not recommended)
-		 * blank		: Opens a new tab in the browser showing the mercadopago checkout process
-		 *
-		 * This way is determined by the configuration set in the backend (uimode) in 
-		 * the mercado pago plugin.
-		 *
-		 */
-
-		public function javascriptAction(){
-
-			$this->View()
-			->assign(
-						'gatewayUrl',
-						$this->getCheckoutUrl()
-			);
-
-			$this->View()
-			->assign(
-						'jsMode',
-						strtolower($this->getPlugin()->getConfig('uimode'))
-			);
+			return $url;
 
 		}
 
 		/**
-		 * The PHP action redirects immediately to the mercado pago URL 
-		 * created by self::getCheckoutUrl leaving your shop.
+		 * IMPORTANT:
+		 *------------------------------------------------------------------
+		 * It is not safe to do any kind of processing on success, failure
+		 * or pending payment, the user could close the payment window
+		 * before the redirect from mercadopago (which takes 5 seconds)
+		 * takes place, for this reason we don't pass tokens and handle the 
+		 * payment status update from the ipn action.
 		 */
 
-		public function phpRedirectAction(){
+		public function successAction(){
 
-			$this->redirect($this->getCheckoutUrl());
+			$response	=	$this->getService()
+			->createPaymentResponse($this->Request());
+
+			$this->assignTranslationToView();
 
 		}
 
-		/**
-		 * The iframe action renders an iframe showing the mercadopago checkout process
-		 * inside of the shop.
-		 */
+		public function cancelAction(){
 
-		public function iframeAction(){
+			$response	=	$this->getService()
+			->createPaymentResponse($this->Request());
+			$this->assignTranslationToView();
 
-			$this->View()
-			->assign(
-						'gatewayUrl',
-						$this->getCheckoutUrl()
+		}
+
+		public function pendingAction(){
+
+			$response	=	$this->getService()
+			->createPaymentResponse($this->Request());
+			$this->assignTranslationToView();
+
+		}
+
+		private function assignTranslationToView(){
+
+			$locale	=	$this->get('locale');
+			$locale	=	substr($locale,0,strpos($locale,'_'));
+			$locale	=	sprintf(
+										'%s/Resources/locale/%s.ini',
+										$this->plugin->getPath(),
+										$locale
 			);
+
+			if(!file_exists($locale)){
+
+				$msg	=	"Locale $locale not found for StangeMercadoPago plugin";
+				throw new \Exception($msg);
+
+			}
+
+			foreach(parse_ini_file($locale) as $key=>$value){
+
+				$this->View()->assign($key,$value);
+
+			}
 
 		}
 
@@ -213,27 +211,41 @@
 		 * Instant payment notifications are notifications sent by MercadoPago
 		 * when the customer has pressed the "pay" button in the mercadopago site.
 		 *
-		 * IPN's must be configured (while LOGGED IN mercadopago) 
-		 * from the following URL: https://www.mercadopago.com.ar/ipn-notifications
-		 * 
-		 * While configuring the ipn notification in mercado pago, it must match 
-		 * your domain, for instance: https://www.your-domain.com/MercadoPago/ipn
-		 *
 		 * This action creates an IPN Payment Response from an enlight request
-		 * and proceeds to save the order in your shop.
+		 * and proceeds to update the customer order to the result obtained
+		 * from the mercadopago API (which is mapped to Shopware order statuses).
 		 *
+		 * NOTE: In this version it is not necessary to configure the IPN url through
+		 * the mercadopago backend, the URL is automatically generated on checkout.
 		 */
 
 		public function ipnAction(){
 
-			$response	=	$this->getService()
-			->createIPNResponseFromRequest($this->Request());
+			try{
 
-			$this->saveOrder(
-									$response->id,
-									$this->createPaymentUniqueId(),
-									$response->status
-			);
+				/** 
+				 * We are only interested in the payment topic, by default
+				 * mercadopago will send both merchant_order and payment.
+				 */
+
+				if($this->Request()->get('topic') == 'merchant_order'){
+
+					return;
+
+				}
+
+				$pid			=	$this->Request()->get('pid');
+
+				$response	=	$this->getService()
+				->createIPNResponse($this->Request());
+
+				$this->savePaymentStatus($pid,$pid,$response->getStatus());
+
+			}catch(\Exception $e){
+
+				throw new \Exception($e->getMessage());
+
+			}
 
 		}
 

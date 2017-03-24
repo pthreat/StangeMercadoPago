@@ -1,209 +1,297 @@
 <?php
 
-	/**
-	 * This class is used for handling and parsing IPN responses 
-	 * through the mercado pago API.
-	 *
-	 * @author Federico Stange <jpfstange@gmail.com>
-	 * @license MIT (See the LICENSE file for more information)
-	 */
-
 	namespace StangeMercadoPago\Components\Payment{
 
-		class Response{
+		use \StangeMercadoPago\Components\Payment\Base	as	BasePayment;
 
-			/**
-			 * Taken from ShopWare's payment statuses
+		class Response extends BasePayment{
+
+			/** 
+			 * Holds the current payment status (approved,cancelled or pending)
+			 * @var string $status
 			 */
 
-			const PAYMENTSTATUSPARTIALLYPAID	=	11;
-			const PAYMENTSTATUSPAID				=	12;
-			const PAYMENTSTATUSREJECTED		=	4;
-			const PAYMENTSTATUSCANCELLED		=	-1;	
+			private	$status			=	NULL;
 
 			/**
-			 * Contains the \MP instance in order to be able to get the payment information through 
-			 * the payment id.
-			 * @var \MP Mercado Pago Client instance
+			 * Holds the collection id sent by mercadopago
+			 * @param int $collectionId
 			 */
 
-			private	$mp		=	NULL;
+			private	$collectionId	=	NULL;
 
 			/**
-			 * Contains the payment IPN (Notification id)
-			 * @var string|int Payment topic
+			 * Contains the merchant order id
+			 * @var int $merchOrderId
 			 */
 
-			private	$id		=	NULL;
+			private	$merchOrderId	=	NULL;
 
 			/**
-			 * Contains the payment topic
-			 * @var string Payment topic
+			 * Contains the mercadopago preference id
+			 * @var string $preferenceId
 			 */
+
+			private	$preferenceId	=	NULL;
+
+			/**
+			 * Mercado Pago Client Object
+			 * @var \MP 
+			 */
+
+			 private $mpClient		=	NULL;
+
+
+			/**
+			 * Contains the payment method used by the customer
+			 *
+			 * @link https://api.mercadopago.com/payment_types
+			 * @var string $paymentType
+			 */
+
+			private	$paymentType	=	NULL;
+
+			/**
+			 * Contains the Shopware payment id
+			 * @var string Payment id
+			 */
+
+			 private	$paymentId		=	NULL;
+
+			public function __construct(Array $params){
 	
-			private	$topic	=	NULL;
+				parent::__construct($params);
 
-			/**
-			 * Contains the status of the operation
-			 * @var int operation status
-			 */
-
-			private	$status	=	NULL;
-
-			public function __construct(Array $params=Array()){
-
-				if(isset($params['mp'])){
-
-					$this->setMp($params['mp']);
-
-				}
-
-				if(isset($params['topic'])){
-
-					$this->setTopic($params['topic']);
-
-				}
-
-				if(isset($params['id'])){
-
-					$this->setId($params['id']);
-
-				}
-
-			}
-
-			public function setMP(\MP $mp){
-
-				$this->mp	=	$mp;
-				return $this;
-
-			}
-
-			public function getMP(){
-
-				return $this->mp;
-
-			}
-
-			public function setTopic($topic){
-
-				$topic	=	strtolower(trim($topic));
-
-				if($topic!=='payment'){
-
-					$msg	=	"Invalid topic received, expected \"payment\" got: \"$topic\"";
-					throw new \InvalidArgumentException($msg);
-
-				}
-
-				$this->topic	=	$topic;
-
-				return $this;
-
-			}
-
-			public function getTopic(){
-
-				return $this->topic;
-
-			}
-
-			public function setId($id){
-
-				if(!($id&&is_numeric($id)&&$id>0)){
-
-					$msg	=	"Invalid payment id received, expected numeric payment id, got: \"$topic\"";
-					throw new \InvalidArgumentException($msg);
-
-				}
-
-				$this->id	=	$id;
-
-				return $this;
-
-			}
-
-			public function getId(){
-
-				return $this->id;
-
-			}
-
-			public function parse(){
-
-				$this->setMp($this->mp);
-				$this->setId($this->id);
-				$this->setTopic($this->topic);
-
-				$payment	=	$this->mp
-				->get(
-						sprintf(
-									"/collections/notifications/%s",
-									$this->id
-						)
+				$this->setCollectionId(
+												isset($params['collection_id']) ?
+												$params['collection_id']	:	
+												NULL
+				);
+												
+				$this->setStatus(
+										isset($params['collection_status']) ? 
+										$params['collection_status'] : NULL
 				);
 
-				if(!isset($payment['status']) || $payment['status']!==200){
+				$this->setPreferenceId(
+												isset($params['preference_id']) ?
+												$params['preference_id'] : 
+												NULL
+				);
 
-					throw new \InvalidArgumentException("Invalid IPN Response");
+				$this->setPaymentType(
+												isset($params['payment_type']) ? 
+												$params['payment_type']	:	
+												NULL
+				);
+
+				$this->setMerchantOrderId(
+													isset($params['merchant_order_id']) ?
+													$params['merchant_order_id']	:	
+													NULL
+				);
+
+				$this->setPaymentId($params['pid']);
+
+			}
+
+
+			/**
+			 * Set Shopware's internal payment id
+			 *
+			 * @param string $id 
+			 * @return $this
+			 */
+
+			public function setPaymentId($id){
+
+				$this->paymentId	=	$id;
+				return $this;
+
+			}
+
+			/**
+			 * Get shopware's payment id
+			 *
+			 * @return string Payment id
+			 */
+
+			public function getPaymentId(){
+
+				return $this->paymentId;
+
+			}
+
+			/**
+			 * Set the mercadopago collection id.
+			 *
+			 * @param int $id COllection id
+			 * @return $this
+			 */
+
+			public function setCollectionId($id){
+
+				$id	=	(int)$id;
+
+				if($id<=0){
+					$msg	=	"Invalid collection id";
+					throw new \InvalidArgumentException($msg);	
+				}
+
+				$this->collectionId	=	$id;
+
+				return $this;
+
+			}
+
+			/**
+			 * Return the mercadopago collection id
+			 *
+			 * @return int the collection id
+			 */
+
+			public function getCollectionId(){
+
+				return $this->collectionId;
+
+			}
+
+			/**
+			 * Set the mercado pago preference id
+			 *
+			 * @return $this
+			 */
+
+			public function setPreferenceId($id){
+
+				$id	=	trim($id);
+
+				if(empty($id)){
+
+					$msg	=	"Preference id can not be empty";
+					throw new \InvalidArgumentException($msg);	
 
 				}
 
-				if(
-						!isset($payment['response']['collection']['status']) ||
-						!isset($payment['response']['collection']['status_detail']) 
-				){
+				$this->preferenceId	=	$id;
 
-					throw new \RuntimeException("Wrong MP IPN Response");
+				return $this;
 
-				}
+			}
 
-				$transactionStatus	=	$payment['response']['collection']['status'];
-				$statusDetail			=	$payment['response']['collection']['status_detail'];
+			/**
+			 * Get the mercado pago preference id
+			 * @return string mercado pago preference id
+			 */
 
-				switch($transactionStatus){
+			public function getPreferenceId(){
 
-					case 'approved':
+				return $this->preferenceId;
 
-						$status	=	$statusDetail=='accredited' ? 
-						self::PAYMENTSTATUSPAID :
-						self::PAYMENTSTATUSPARTIALLYPAID;
+			}
 
-					break;
+			/**
+			 * Set the payment status.
+			 * Said status can be one of: approved, pending, cancelled
+			 */
+	
+			public function setStatus($status){
 
-					case 'cancelled':
+				if(!in_array($status,['approved','pending','cancelled'])){
 
-						$status	=	self::PAYMENTSTATUSCANCELLED;
-
-					break;
-
-					case 'rejected':
-
-						$status	=	self::PAYMENTSTATUSREJECTED;
-
-					break;
-
-					default:
-
-						throw \Exception("Unknown payment status \"$status\"");
-
-					break;
+					throw new \InvalidArgumentException("Invalid payment status");
 
 				}
 
 				$this->status	=	$status;
 
+				return $this;
+
 			}
 
-			public function __get($name){
+			/**
+			 * Get the payment status
+			 *
+			 * @see self::setStatus
+			 * @return string one of the 3 possible payment statuses 
+			 */
 
-				if(!isset($this->$name)){
+			public function getStatus(){
 
-					throw new \InvalidArgumentException("Unknown attribute $name");
+				return $this->status;
+
+			}
+
+			/**
+			 * Set the payment type
+			 *
+			 * @param string $type Payment type
+			 * @throws \InvalidArgumentException if the payment type is invalid
+			 * @return $this
+			 */
+
+			public function setPaymentType($type){
+				
+				$type	=	trim($type);
+
+				if(empty($type)){
+
+					$msg	=	"Payment type can not be empty";
+					throw new \InvalidArgumentException($msg);
 
 				}
 
-				return $this->$name;
+				$this->paymentType	=	$type;
+
+				return $this;
+
+			}
+
+			/**
+			 * Get the payment type
+			 * @return string Payment type
+			 */
+
+			public function getPaymentType(){
+
+				return $this->paymentType;
+
+			}
+
+			/**
+			 * Set the merchant order id
+			 * @param int $id Merchant order id
+			 */
+
+			public function setMerchantOrderId($id){
+
+				if($id<=0){
+
+					$msg	=	"Invalid merchant id";
+					throw new \InvalidArgumentException($msg);
+
+				}
+
+				$this->merchOrderId	=	$id;
+
+				return $this;
+
+			}
+
+			/**
+			 * Get the merchant order id
+			 * @return int Mercado pago merchant order id.
+			 */
+
+			public function getMerchantOrderId(){
+
+				return $this->merchOrderId;
+
+			}
+
+			public function getMerchantInfo(){
+
+				return parent::getMP()->get(sprintf('/merchant_orders/%s',$this->merchOrderId));
 
 			}
 

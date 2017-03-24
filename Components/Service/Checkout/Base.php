@@ -47,10 +47,51 @@
 			private	$rate				=	NULL;
 
 			/**
-			 * The constructor takes in a Shopware_Components_Config object or 
-			 * an array, this duality is provided for the use of easy testing.
+			 * Holds the IPN Url. Said URL must be *accesible* to the internet.
+			 * @var string a valid url for getting instant payment notifications
+			 */
+
+			private	$ipnURL			=	NULL;
+
+			/**
+			 * Holds the url which mercadopago will use (if specified) 
+			 * when a payment is successful.
 			 *
-			 * Example Array structure:
+			 * @var string A valid url
+			 */
+
+			private	$successURL			=	NULL;
+
+			/**
+			 * Holds the url which mercadopago will use (if specified) 
+			 * when a payment is cancelled.
+			 *
+			 * @var string A valid url
+			 */
+
+			private	$cancelURL			=	NULL;
+
+			/**
+			 * Holds the url which mercadopago will use (if specified) 
+			 * when a payment is pending.
+			 *
+			 * @var string A valid url
+			 */
+
+			private	$pendingURL			=	NULL;
+
+			/**
+			 * Contains the payment id
+			 * @var string Payment id
+			 */
+
+			private	$paymentId			=	NULL;
+
+			/**
+			 * The constructor takes in a Shopware_Components_Config object or 
+			 * an array, this duality is provided for easing testing.
+			 *
+			 * @param Array $params an array containing the following structure
 			 * <code>
 			 * [
 			 *		'id'					=>	'mercado pago client id'
@@ -59,8 +100,10 @@
 			 *		'app_currency'		=> 'Application currency',
 			 *    'rate'				=> NULL, //DO NOT SPECIFY! TESTING ONLY!
 			 * ]
-			 *
 			 * </code>
+			 *
+			 * @param \Shopware_Components_Config $params You can also pass 
+			 * a shopware components config object.
 			 *
 			 * @throws \InvalidArgumentException if id and secret or token
 			 * were not specified.
@@ -74,19 +117,15 @@
 				){
 
 					$params	=	[
-									'id'					=>	$params->get('CLIENT_ID'),
-									'secret'				=>	$params->get('CLIENT_SECRET'),
-									'token'				=>	$params->get('TOKEN'),
-									'app_currency'		=>	$params->get('CURRENCY')
+										'id'					=>	$params->get('CLIENT_ID'),
+										'secret'				=>	$params->get('CLIENT_SECRET'),
+										'token'				=>	$params->get('TOKEN'),
+										'app_currency'		=>	$params->get('CURRENCY')
 					];
 
 				}
 
-				if(isset($params['app_currency'])){
-
-					$this->setAppCurrency($params['app_currency']);
-
-				}
+				$this->setAppCurrency($params['app_currency']);
 
 				if(isset($params['store_currency'])){
 
@@ -122,6 +161,189 @@
 			}
 
 			/**
+			 * Set the payment identifier to append into the notification URL
+			 * This allows us to set an order id on the mercadopago notification_url 
+			 *
+			 * @param string $id Payment id
+			 * @return $this
+			 */
+
+			public function setPaymentId($id){
+
+				$_id	=	trim($id);
+
+				if(empty($_id)){
+			
+					$msg	=	"Payment id can not be empty";
+					throw new \InvalidArgumentException($msg);
+
+				}
+
+				$this->paymentId	=	$id;
+
+				return $this;
+
+			}
+
+			/**
+			 * Returns the payment id
+			 *
+			 * @return string payment id 
+			 */
+
+			public function getPaymentId(){
+
+				return $this->paymentId;
+
+			}
+
+			/**
+			 * Sets the IPN URL for receiving payment notifications
+			 *
+			 * @throws \InvalidArgumentException If the URL is invalid
+			 * @return $this
+			 */
+
+			public function setIPNUrl($url){
+
+				if(!filter_var($url,\FILTER_VALIDATE_URL)){
+
+					$msg	=	"IPN URL is invalid. Remember said URL must contain a path, example: http://myshop.com/MercadoPago";
+
+					throw new \InvalidArgumentException($msg);
+
+				}
+
+				$this->ipnURL	=	$url;
+
+				return $this;
+
+			}
+
+			/**
+			 * Returns the IPN url or null in case said url has not been set
+			 *
+			 * @return string IPN Url
+			 * @return url IPN url has not been set
+			 */
+
+			public function getIPNUrl(){
+
+				return $this->ipnURL;
+
+			}
+
+			/**
+			 * Set the URL for mercadopago to redirect on payment success
+			 *
+			 * @param string $url Success url
+			 * @throws \InvalidArgumentException If the url is not valid
+			 * @return $this
+			 */
+
+			public function setSuccessUrl($url){
+
+				if(!filter_var($url,\FILTER_VALIDATE_URL)){
+
+					$msg	=	"Invalid success URL: \"$url\"";
+
+					throw new \InvalidArgumentException($msg);
+
+				}
+
+				$this->successURL	=	$url;
+
+				return $this;
+
+			}
+
+			/**
+			 * Get the URL for mercadopago to redirect on payment success
+			 * @return string Success URL
+			 * @return null Success URL has not been set
+			 */
+
+			public function getSuccessUrl(){
+		
+				return $this->successURL;
+
+			}
+
+			/**
+			 * Set the URL for mercadopago to redirect when a payment is cancelled
+			 *
+			 * @param string $url cancel url
+			 * @throws \InvalidArgumentException If the url is not valid
+			 * @return $this
+			 */
+
+			public function setCancelUrl($url){
+
+				if(!filter_var($url,\FILTER_VALIDATE_URL)){
+
+					$msg	=	"Invalid cancel URL: \"$url\"";
+
+					throw new \InvalidArgumentException($msg);
+
+				}
+
+				$this->cancelURL	=	$url;
+
+				return $this;
+
+			}
+
+			/**
+			 * Get the URL for mercadopago to redirect when a payment is cancelled
+			 *
+			 * @return string Cancel URL
+			 * @return null Cancel URL has not been set
+			 */
+
+			public function getCancelUrl(){
+		
+				return $this->cancelURL;
+
+			}
+
+			/**
+			 * Set the URL for mercadopago to redirect when a payment is pending
+			 *
+			 * @param string $url pending url
+			 * @throws \InvalidArgumentException If the url is not valid
+			 * @return $this
+			 */
+
+			public function setPendingUrl($url){
+
+				if(!filter_var($url,\FILTER_VALIDATE_URL)){
+
+					$msg	=	"Invalid pending URL: \"$url\"";
+
+					throw new \InvalidArgumentException($msg);
+
+				}
+
+				$this->pendingURL	=	$url;
+
+				return $this;
+
+			}
+
+			/**
+			 * Get the URL for mercadopago to redirect when a payment is pending
+			 *
+			 * @return string Pending URL
+			 * @return null Pending URL has not been set
+			 */
+
+			public function getPendingUrl(){
+		
+				return $this->pendingURL;
+
+			}
+
+			/**
 			 * Returns the MP Client instance
 			 * @return \MP The mercado pago client object
 			 */
@@ -143,7 +365,7 @@
 			 * ARS, BOB, BRS, CLF, CLP, COP, CRC, CUC, DOP, GTQ, EUR
 			 * HNL, NIO, PAB, PEN, USD, UYU or VEF
 			 * 
-			 * @return \StangeMercadoPago\Components\Service\Checkout\Base 
+			 * @return $this
 			 */
 
 			public function setAppCurrency($currency){
@@ -175,6 +397,7 @@
 			 * Given currency code must comply to ISO-4217 (Alpha-3).
 			 *
 			 * @link http://www.xe.com/iso4217.php#section2
+			 * @return $this
 			 */
 
 			public function setStoreCurrency($currency){
@@ -215,7 +438,7 @@
 			 * @TODO Make use of a currency object
 			 * @TODO Make use of a currency validator
 			 *
-			 * @return null
+			 * @return string Normalized currency name
 			 */
 
 			private function validateCurrency($name, Array $restrictTo=Array()){
@@ -451,7 +674,7 @@
 			 * @see self::setAppCurrency
 			 * @see self::setStoreCurrency
 			 * @see self::getCalculatedRate
-			 * 
+			 * @return $this
 			 */
 
 			public function setRate($rate){

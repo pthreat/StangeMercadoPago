@@ -158,54 +158,6 @@
 
 		</element>
 
-		<element required="true" type="select">
-
-			<name>UI_MODE</name>
-
-			<label lang="de">UI Betriebsart</label>
-			<label lang="en">UI Operation mode</label>
-
-			<store>
-
-				<option>
-					<value>modal</value>
-					<label lang="de">Javascript Modal</label>
-					<label lang="en">Javascript Modal</label>
-				</option>
-
-				<option>
-					<value>popup</value>
-					<label lang="de">Javascript Popup</label>
-					<label lang="en">Javascript Popup</label>
-				</option>
-
-				<option>
-					<value>redirect</value>
-					<label lang="de">Javascript Redirect</label>
-					<label lang="en">Javascript Redirect</label>
-				</option>
-
-				<option>
-					<value>blank</value>
-					<label lang="de">Javascript Neue Window</label>
-					<label lang="en">Javascript New Window</label>
-				</option>
-
-				<option>
-					<value>iframe</value>
-					<label lang="de">Store Iframe</label>
-					<label lang="en">Store Iframe</label>
-				</option>
-
-				<option>
-					<value>php_redirect</value>
-					<label lang="de">PHP Redirect</label>
-					<label lang="en">PHP Redirect</label>
-				</option>
-
-			</store>
-
-		</element>
 	</elements>
 
 </config>

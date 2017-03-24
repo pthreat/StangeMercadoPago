@@ -17,6 +17,8 @@
 
 		use \StangeMercadoPago\Components\Service\Checkout\Base	as	BaseCheckout;
 		use \StangeMercadoPago\Components\Payment\Response\IPN	as	IPNPaymentResponse;
+		use \StangeMercadoPago\Components\Payment\Response			as	PaymentResponse;
+		use \Enlight_Controller_Request_Request						as	Request;
 
 		class Basic extends BaseCheckout{
 
@@ -165,7 +167,7 @@
 					$items[]	=	[
 										"title"			=>	$article['articlename'],
 										"quantity"		=>	(int)$article['quantity'],
-										"currency_id"	=>	$appCurrency,
+										"currency_id"	=>	$this->getAppCurrency(),
 										"unit_price"	=>	floatval($price)
 					];
 					
@@ -226,28 +228,65 @@
 
 			public function createMPPreferenceStructure(Array $params){
 
-				return [
-							'items'		=>	$this->basketToMp(
+				/** Create the mercadopago basic structure **/
+				$struct	=	[
+									'items'		=>	$this->basketToMp(
 																isset($params['items'])		?
 																$params['items'] : []
-							),
-							'payer'		=>	$this->customerToMp(
+									),
+									'payer'		=>	$this->customerToMp(
 																isset($params['customer'])	?	
 																$params['customer'] : []
-							),
-							'shipments'	=>	$this->shipmentToMp(
+									),
+									'shipments'	=>	$this->shipmentToMp(
 																isset($params['shipment'])	?	
 																$params['shipment'] : []
-							)
+									)
 				];
+
+				/** Add the IPN url, append the payment id **/
+
+				if($this->getIPNUrl()){
+
+					$ipnURL	=	"{$this->getIPNUrl()}?pid={$this->getPaymentId()}";
+					$struct['notification_url']	=	$ipnURL;
+
+				}
+
+				/** Provide back_urls for a smooth checkout process **/
+
+				if($this->getSuccessUrl()){
+
+					$struct['back_urls']['success']	=	$this->getSuccessUrl();
+
+					/** auto return to the shop on purchase approved **/
+					$struct['auto_return']	=	'approved';
+
+				}
+
+				if($this->getPendingUrl()){
+
+					$struct['back_urls']['pending']	=	$this->getPendingUrl();
+
+				}
+
+				if($this->getCancelUrl()){
+
+					$struct['back_urls']['cancel']	=	$this->getCancelUrl();
+
+				}
+
+				return $struct;
 
 			}
 
 			/**
-			 * Creates a mercado pago preference
+			 * Creates a mercado pago payment preference.
 			 *
-			 * @param Array $params An array containing the structure described in self::createMPPreferenceStructure
+			 * @param Array $params An array containing the structure 
+			 * described in self::createMPPreferenceStructure
 			 * @see self::createMPPreferenceStructure
+			 * @see parent::createPaymentToken
 			 * @return Array Mercado Pago checkout preference array.
 			 */
 
@@ -263,9 +302,11 @@
 			/**
 			 * Returns the checkout URL for mercado pago
 			 *
-			 * @param Array $params An array containing the structure described in self::createMPPreference
+			 * @param Array $params An array containing the structure described 
+			 * in self::createMPPreference
 			 * @param string $mode (production or sandbox)
-			 * @throws \RuntimeException if it wasn't possible to create the mercadopago preference
+			 * @throws \RuntimeException if it wasn't possible to 
+			 * create the mercadopago preference
 			 * @see self::createMPPreference
 			 * @return string The mercadopago checkout url
 			 */
@@ -293,18 +334,42 @@
 			 * Creates a payment response from an enlight controller request
 			 *
 			 * @param \Enlight_Controller_Request_Request $request
-			 * @return \stange\mercadopago\payment\Response
+			 * @return \stange\mercadopago\payment\Response\IPN
 			 */
 
-			public function createIPNResponseFromRequest(\Enlight_Controller_Request_Request $request){
+			public function createIPNResponse(Request $request){
 
-				$response	=	new IPNPaymentResponse([
-																	'id'		=>	$request->get('id'),
-																	'topic'	=>	$request->get('topic'),
-																	'mp'		=>	$this->getMPClient()
-				]);
+				try{
 
-				$response->parse();
+					$response	=	new IPNPaymentResponse([
+															'id'		=>	$request->get('id'),
+															'topic'	=>	$request->get('topic'),
+															'mp'		=>	$this->getMPClient()
+					]);
+
+					return $response->parse();
+
+				}catch(\Exception $e){
+
+					throw $e;
+
+				}
+
+			}
+
+			public function createPaymentResponse(Request $request){
+
+				$params	=	$request->getQuery();
+
+				if(!isset($params['external_reference'])){
+
+					$msg	=	"No external_reference parameter was found";
+					throw new \InvalidArgumentException($msg);
+
+				}
+
+				$params['mp']		=	$this->getMPClient();
+				$response			=	new PaymentResponse($params);
 
 				return $response;
 
@@ -312,7 +377,7 @@
 
 			/** 
 			 * Validation: 
-			 * These methods will be reaplaced by shopware struct's 
+			 * These methods will be replaced by shopware struct's 
 			 */
 
 			/**

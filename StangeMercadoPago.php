@@ -47,6 +47,8 @@
 
 				$installer->createOrUpdate($context->getPlugin(), $options);
 
+				return parent::install($context);
+
 			}
 
 			/**
@@ -56,6 +58,8 @@
 			public function uninstall(UninstallContext $context){
 
 				$this->setActiveFlag($context->getPlugin()->getPayments(), FALSE);
+
+				return parent::uninstall($context);
 
 			}
 
@@ -67,6 +71,8 @@
 
 				$this->setActiveFlag($context->getPlugin()->getPayments(), FALSE);
 
+				return parent::deactivate($context);
+
 			}
 
 			/**
@@ -76,6 +82,8 @@
 			public function activate(ActivateContext $context){
 
 				$this->setActiveFlag($context->getPlugin()->getPayments(), TRUE);
+
+				return parent::activate($context);
 
 			}
 
@@ -123,7 +131,7 @@
 			 * @return string The configuration value
 			 */
 
-			public function getConfig($name){
+			public function getConfig($name,$throw=TRUE){
 
 				$configNs	=	strtolower(__CLASS__);
 				$bsPos		=	stripos($configNs,"\\");
@@ -140,8 +148,14 @@
 
 				if($value === NULL){
 
-					$msg	=	"Configuration value \"$name\" has not been configured, please configure this value";
-					throw new \LogicException($msg);
+					if($throw){
+
+						$msg	=	"Configuration value \"$name\" has not been configured, please configure this value";
+						throw new \LogicException($msg);
+
+					}
+
+					return NULL;
 
 				}
 
@@ -149,8 +163,12 @@
 
 				if(empty($value)){
 
-					$msg	=	"Configuration value \"$name\" could not be found. Please CLEAR your store cache";
-					throw new \LogicException($msg);
+					if($throw){
+
+						$msg	=	"Configuration value \"$name\" could not be found. Please CLEAR your store cache";
+						throw new \LogicException($msg);
+
+					}
 
 				}
 
