@@ -154,32 +154,86 @@
 		 * before the redirect from mercadopago (which takes 5 seconds)
 		 * takes place, for this reason we don't pass tokens and handle the 
 		 * payment status update from the ipn action.
+		 *
+		 * NOTE: It is checked that the parameters passed through $_GET in 
+		 * the request are actually valid mercado pago parameters to avoid 
+		 * any kind of "screenshot" scam through social engineering.
+		 *
 		 */
 
 		public function successAction(){
 
-			$response	=	$this->getService()
-			->createPaymentResponse($this->Request());
-
 			$this->assignTranslationToView();
 
-		}
+			try{
 
-		public function cancelAction(){
+				$response	=	$this->getService()
+				->createPaymentResponse($this->Request());
 
-			$response	=	$this->getService()
-			->createPaymentResponse($this->Request());
-			$this->assignTranslationToView();
+			}catch(\Exception $e){
+
+				$this->redirect(['controller'=>'index']);
+
+			}
 
 		}
 
 		public function pendingAction(){
 
-			$response	=	$this->getService()
-			->createPaymentResponse($this->Request());
 			$this->assignTranslationToView();
 
+			try{
+
+				$response	=	$this->getService()
+				->createPaymentResponse($this->Request());
+
+			}catch(\Exception $e){
+
+				$this->redirect(['controller'=>'index']);
+
+			}
+
 		}
+
+		public function cancelAction(){
+
+			$this->assignTranslationToView();
+
+			try{
+
+				$response	=	$this->getService()
+				->createPaymentResponse($this->Request());
+
+			}catch(\Exception $e){
+
+				$this->redirect(['controller'=>'index']);
+
+			}
+
+		}
+
+		public function pendingAction(){
+
+			$this->assignTranslationToView();
+
+			try{
+
+				$response	=	$this->getService()
+				->createPaymentResponse($this->Request());
+
+			}catch(\Exception $e){
+
+				$this->redirect(['controller'=>'index']);
+
+			}
+
+		}
+
+		/**
+		 * This method will get the current locale in use, try to find 
+		 * said locale in the Resources/locale/ folder and assign each
+		 * variable defined in the locale ini file to the View object.
+		 */
 
 		private function assignTranslationToView(){
 
