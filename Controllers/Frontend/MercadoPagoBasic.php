@@ -125,11 +125,10 @@
 			$router	=	$this->Front()->Router();
 
 			$service->setIPNUrl($router->assemble(['action'=>'ipn','forceSecure'=>FALSE]));
+
 			$service->setSuccessUrl($router->assemble(['action'=>'success','forceSecure'=>TRUE]));
 			$service->setCancelUrl($router->assemble(['action'=>'cancel','forceSecure'=>TRUE]));
 			$service->setPendingUrl($router->assemble(['action'=>'pending','forceSecure'=>TRUE]));
-
-			$service->setIPNUrl('http://190.11.60.224/payment.php');
 
 			$service->setPaymentId($paymentId);
 			$service->setStoreCurrency($storeCurrency);
