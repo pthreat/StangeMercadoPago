@@ -212,23 +212,6 @@
 
 		}
 
-		public function pendingAction(){
-
-			$this->assignTranslationToView();
-
-			try{
-
-				$response	=	$this->getService()
-				->createPaymentResponse($this->Request());
-
-			}catch(\Exception $e){
-
-				$this->redirect(['controller'=>'index']);
-
-			}
-
-		}
-
 		/**
 		 * This method will get the current locale in use, try to find 
 		 * said locale in the Resources/locale/ folder and assign each
